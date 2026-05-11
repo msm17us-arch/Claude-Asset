@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LearnIQ — Learning Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0D0F1A;--ink2:#2D3250;--ink3:#6B7280;
+  --paper:#F8F7F4;--card:#FFFFFF;
+  --teal:#0EA5A0;--teal-l:#E0F7F6;--teal-d:#0C8A86;
+  --amber:#F59E0B;--amber-l:#FEF3C7;
+  --rose:#E84C6B;--rose-l:#FDE8ED;
+  --violet:#7C3AED;--violet-l:#EDE9FE;
+  --emerald:#059669;--emerald-l:#D1FAE5;
+  --border:#E8E6E1;
+  --ff-h:'Fraunces',serif;
+  --ff-b:'DM Sans',sans-serif;
+  --shadow:0 2px 12px rgba(13,15,26,.08);
+  --shadow-lg:0 8px 32px rgba(13,15,26,.12);
+}
+body{font-family:var(--ff-b);background:var(--paper);color:var(--ink);overflow-x:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--ink);padding:0;z-index:100;display:flex;flex-direction:column}
+.sidebar-brand{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.brand-logo{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.brand-icon{width:36px;height:36px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.brand-name{font-family:var(--ff-h);font-size:20px;font-weight:700;color:#fff}
+.brand-name span{color:var(--teal)}
+.brand-sub{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.5px;text-transform:uppercase}
+.sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto}
+.nav-section{font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:12px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;transition:all .2s;margin-bottom:2px}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
+.nav-item.active{background:rgba(14,165,160,.15);color:var(--teal)}
+.nav-item .ni{width:18px;text-align:center;font-size:15px}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.07)}
+.model-badge{background:rgba(14,165,160,.12);border:1px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 12px}
+.mb-label{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.mb-value{font-size:14px;font-weight:600;color:var(--teal)}
+.mb-sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:2px}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow)}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.page-title{font-family:var(--ff-h);font-size:18px;font-weight:600;color:var(--ink)}
+.yr-pills{display:flex;gap:4px;background:var(--paper);border-radius:8px;padding:3px}
+.yr-pill{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink3);border:none;background:transparent;transition:all .15s}
+.yr-pill.active{background:var(--ink);color:#fff}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.predict-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--teal);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--ff-b);transition:all .2s}
+.predict-btn:hover{background:var(--teal-d);transform:translateY(-1px)}
+.predict-btn .pulse{width:7px;height:7px;background:#4FFFB0;border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── PAGES ── */
+.page{display:none;padding:24px 28px;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px}
+.kpi-card{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.kpi-card.teal::before{background:var(--teal)}
+.kpi-card.amber::before{background:var(--amber)}
+.kpi-card.rose::before{background:var(--rose)}
+.kpi-card.violet::before{background:var(--violet)}
+.kpi-card.emerald::before{background:var(--emerald)}
+.kpi-card.ink::before{background:var(--ink)}
+.kpi-label{font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.kpi-value{font-family:var(--ff-h);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.kpi-delta{font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
+.kpi-delta.up{color:var(--emerald)}
+.kpi-delta.down{color:var(--rose)}
+.kpi-delta.neutral{color:var(--ink3)}
+
+/* Chart grid */
+.chart-grid{display:grid;gap:18px}
+.chart-grid-2{grid-template-columns:1fr 1fr}
+.chart-grid-3{grid-template-columns:2fr 1fr 1fr}
+.chart-grid-half{grid-template-columns:1fr 1fr}
+
+.chart-card{background:var(--card);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+.chart-head{padding:16px 20px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.chart-title{font-family:var(--ff-h);font-size:15px;font-weight:600;color:var(--ink)}
+.chart-sub{font-size:11px;color:var(--ink3);margin-top:2px}
+.chart-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
+.badge-teal{background:var(--teal-l);color:var(--teal-d)}
+.badge-amber{background:var(--amber-l);color:#92400E}
+.badge-rose{background:var(--rose-l);color:#9F1239}
+.badge-violet{background:var(--violet-l);color:#5B21B6}
+.badge-emerald{background:var(--emerald-l);color:#065F46}
+.chart-body{padding:16px 20px 20px}
+.chart-wrap{position:relative}
+
+/* ── TABLE ── */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);background:var(--paper);border-bottom:1px solid var(--border)}
+.data-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink2)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:#FAFAF9}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+
+/* ── PREDICTION PANEL ── */
+.prediction-banner{background:linear-gradient(135deg,var(--ink) 0%,#1E2147 100%);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;gap:20}
+.pb-left h2{font-family:var(--ff-h);font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+.pb-left p{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6}
+.pb-right{display:flex;gap:12px;flex-wrap:wrap}
+.pred-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;text-align:center;min-width:100px}
+.pred-chip-val{font-family:var(--ff-h);font-size:22px;font-weight:700;color:var(--teal);margin-bottom:2px}
+.pred-chip-label{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.5px}
+
+/* ── SEGMENT CARDS ── */
+.segment-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.seg-card{border-radius:14px;padding:16px;border:1px solid;transition:all .2s;cursor:pointer}
+.seg-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.seg-icon{font-size:28px;margin-bottom:8px}
+.seg-name{font-family:var(--ff-h);font-size:13px;font-weight:700;margin-bottom:2px}
+.seg-count{font-size:11px;margin-bottom:8px}
+.seg-bar{height:4px;border-radius:2px;margin-bottom:6px}
+.seg-stat{font-size:10px;display:flex;justify-content:space-between}
+
+/* ── STRATEGY RECOMMENDATIONS ── */
+.reco-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.reco-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:18px;display:flex;gap:14px;align-items:flex-start}
+.reco-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.reco-title{font-family:var(--ff-h);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.reco-body{font-size:12px;color:var(--ink3);line-height:1.6;margin-bottom:8px}
+.reco-priority{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block}
+
+/* ── HEATMAP ── */
+.heatmap-wrap{overflow-x:auto}
+.heatmap-table{border-collapse:collapse;font-size:11px;width:100%}
+.heatmap-table th{padding:8px 10px;text-align:center;font-weight:600;color:var(--ink3);background:var(--paper);font-size:9px;text-transform:uppercase;letter-spacing:.4px}
+.heatmap-table td{padding:6px;text-align:center;font-size:11px;font-weight:600;border:2px solid var(--paper);border-radius:4px;cursor:default;transition:all .2s}
+.heatmap-table td:hover{transform:scale(1.1)}
+
+/* ── TREND ARROWS ── */
+.trend-row{display:flex;gap:8px;align-items:center;margin-top:4px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+
+/* Mobile notice */
+@media(max-width:900px){
+  .sidebar{width:200px}
+  .main{margin-left:200px}
+  .kpi-row{grid-template-columns:repeat(3,1fr)}
+  .segment-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <div class="brand-icon">🎓</div>
+      <div class="brand-name">Learn<span>IQ</span></div>
+    </div>
+    <div class="brand-sub">Learning Intelligence Platform</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="nav('overview',this)"><span class="ni">📊</span>Executive Dashboard</div>
+    <div class="nav-item" onclick="nav('trends',this)"><span class="ni">📈</span>3-Year Trends</div>
+
+    <div class="nav-section">Deep Analytics</div>
+    <div class="nav-item" onclick="nav('delivery',this)"><span class="ni">🎯</span>Delivery Modes</div>
+    <div class="nav-item" onclick="nav('bands',this)"><span class="ni">👥</span>Band Performance</div>
+    <div class="nav-item" onclick="nav('competency',this)"><span class="ni">🔥</span>Competency Heatmap</div>
+    <div class="nav-item" onclick="nav('ai',this)"><span class="ni">🤖</span>DACT & AI Analytics</div>
+
+    <div class="nav-section">Prediction</div>
+    <div class="nav-item" onclick="nav('predict',this)"><span class="ni">🔮</span>2025 Predictions</div>
+    <div class="nav-item" onclick="nav('behaviour',this)"><span class="ni">🧠</span>Learner Behaviour</div>
+    <div class="nav-item" onclick="nav('strategy',this)"><span class="ni">🗺️</span>Strategy Recommendations</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="model-badge">
+      <div class="mb-label">Model Accuracy</div>
+      <div class="mb-value">72.5% ↑</div>
+      <div class="mb-sub">Random Forest · 3,150 records</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══════════════════════════════════════════════ -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="pageTitle">Executive Dashboard</div>
+      <div class="yr-pills">
+        <button class="yr-pill" onclick="setYear(2022,this)">2022</button>
+        <button class="yr-pill" onclick="setYear(2023,this)">2023</button>
+        <button class="yr-pill active" onclick="setYear(2024,this)">2024</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div style="font-size:12px;color:var(--ink3)">Synthetic data · Updated Apr 2025</div>
+      <button class="predict-btn" onclick="nav('predict',null)">
+        <div class="pulse"></div> Run 2025 Forecast
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: OVERVIEW ══ -->
+  <div id="page-overview" class="page active">
+    <div class="kpi-row" id="kpiRow"></div>
+    <div class="chart-grid chart-grid-3" style="margin-bottom:18px">
+      <div class="chart-card">
+        <div class="chart-head">
+          <div><div class="chart-title">Learner Volume & Completion</div><div class="chart-sub">Annual trend across 3 years</div></div>
+          <span class="chart-badge badge-teal">3Y Trend</span>
+        </div>
+        <div class="chart-body"><div class="chart-wrap" style="height:220px"><canvas id="overviewMainChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">AI vs Behavioral</div><div class="chart-sub">Adoption rates</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:220px"><canvas id="adoptionChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Service Lines</div><div class="chart-sub">2024 learner share</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:220px"><canvas id="slPieChart"></canvas></div></div>
+      </div>
+    </div>
+    <div class="chart-grid chart-grid-half">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Quarterly Learning Pattern</div><div class="chart-sub">Hours and completion by quarter</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:200px"><canvas id="quarterlyChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Service Line Performance</div><div class="chart-sub">Avg hours, completion & satisfaction · 2024</div></div></div>
+        <div class="chart-body">
+          <table class="data-table" id="slTable"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: TRENDS ══ -->
+  <div id="page-trends" class="page">
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi-card teal"><div class="kpi-label">Total Learners Growth</div><div class="kpi-value">+33%</div><div class="kpi-delta up">↑ 900 → 1200 (2022–24)</div></div>
+      <div class="kpi-card amber"><div class="kpi-label">AI Adoption Growth</div><div class="kpi-value">+32pp</div><div class="kpi-delta up">↑ 30% → 62% (2022–24)</div></div>
+      <div class="kpi-card emerald"><div class="kpi-label">Completion Improvement</div><div class="kpi-value">+5.2pp</div><div class="kpi-delta up">↑ Consistent year-on-year</div></div>
+      <div class="kpi-card violet"><div class="kpi-label">Satisfaction Trend</div><div class="kpi-value">3.8→3.8</div><div class="kpi-delta neutral">→ Stable, target 4.0</div></div>
+    </div>
+    <div class="chart-grid chart-grid-2" style="margin-bottom:18px">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Learning Hours Trend</div><div class="chart-sub">Average hours per learner per year</div></div><span class="chart-badge badge-teal">Trend</span></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:240px"><canvas id="hoursTrendChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Completion Rate Trend</div><div class="chart-sub">Across all bands 2022–2024</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:240px"><canvas id="completionTrendChart"></canvas></div></div>
+      </div>
+    </div>
+    <div class="chart-grid chart-grid-2">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Delivery Mode Evolution</div><div class="chart-sub">Shift from ILT to digital modalities</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:240px"><canvas id="modeEvolutionChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Assessment Score Distribution</div><div class="chart-sub">Completed vs non-completed learners</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:240px"><canvas id="assessmentChart"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: DELIVERY ══ -->
+  <div id="page-delivery" class="page">
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi-card teal"><div class="kpi-label">Top Mode 2024</div><div class="kpi-value">Blended</div><div class="kpi-delta up">Most preferred format</div></div>
+      <div class="kpi-card amber"><div class="kpi-label">Digital Adoption</div><div class="kpi-value">68%</div><div class="kpi-delta up">↑ vILT + eLearning + Micro</div></div>
+      <div class="kpi-card rose"><div class="kpi-label">ILT Share Drop</div><div class="kpi-value">−14pp</div><div class="kpi-delta down">↓ 2022 to 2024</div></div>
+      <div class="kpi-card emerald"><div class="kpi-label">Coaching Growth</div><div class="kpi-value">+18pp</div><div class="kpi-delta up">↑ Senior band preference</div></div>
+    </div>
+    <div class="chart-grid chart-grid-2" style="margin-bottom:18px">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Mode Distribution by Year</div><div class="chart-sub">How delivery is shifting</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:280px"><canvas id="modeBarChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Mode by Level (2024)</div><div class="chart-sub">What each level prefers</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:280px"><canvas id="modeLevelChart"></canvas></div></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head"><div><div class="chart-title">2025 Delivery Mode Recommendation</div><div class="chart-sub">Predicted optimal mix based on trend + performance data</div></div><span class="chart-badge badge-teal">AI Recommended</span></div>
+      <div class="chart-body" id="modeReco"></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: BANDS ══ -->
+  <div id="page-bands" class="page">
+    <div class="chart-grid chart-grid-2" style="margin-bottom:18px">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Learning Hours by Band</div><div class="chart-sub">Juniors learn more hours, seniors learn smarter</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:260px"><canvas id="bandHoursChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Completion Rate by Band</div><div class="chart-sub">Seniority = higher accountability</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:260px"><canvas id="bandCompletionChart"></canvas></div></div>
+      </div>
+    </div>
+    <div class="chart-grid chart-grid-2">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Assessment Score by Band</div><div class="chart-sub">Mid-bands show strongest performance</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:240px"><canvas id="bandAssessChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Band Summary Table</div><div class="chart-sub">All metrics across bands · 2024</div></div></div>
+        <div class="chart-body"><table class="data-table" id="bandTable"></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: COMPETENCY ══ -->
+  <div id="page-competency" class="page">
+    <div class="chart-card" style="margin-bottom:18px">
+      <div class="chart-head"><div><div class="chart-title">Competency × Service Line Heatmap</div><div class="chart-sub">Number of learners per competency per service line · 2024</div></div><span class="chart-badge badge-amber">Heatmap</span></div>
+      <div class="chart-body"><div class="heatmap-wrap"><table class="heatmap-table" id="compHeatmap"></table></div></div>
+    </div>
+    <div class="chart-grid chart-grid-2">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Top Competencies 2024</div><div class="chart-sub">By enrolment volume</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:240px"><canvas id="compChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Competency Gaps by Band</div><div class="chart-sub">Where investment is needed most</div></div></div>
+        <div class="chart-body" id="compGaps" style="padding-top:4px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: AI ══ -->
+  <div id="page-ai" class="page">
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi-card teal"><div class="kpi-label">AI Adoption 2024</div><div class="kpi-value">62%</div><div class="kpi-delta up">↑ +32pp since 2022</div></div>
+      <div class="kpi-card amber"><div class="kpi-label">Top AI Topic</div><div class="kpi-value">GenAI</div><div class="kpi-delta up">Fastest growing area</div></div>
+      <div class="kpi-card violet"><div class="kpi-label">Avg AI Hours</div><div class="kpi-value">18h</div><div class="kpi-delta neutral">Per enrolled learner</div></div>
+      <div class="kpi-card rose"><div class="kpi-label">Gap: Non-AI Learners</div><div class="kpi-value">38%</div><div class="kpi-delta down">↓ Need targeted push</div></div>
+    </div>
+    <div class="chart-grid chart-grid-2" style="margin-bottom:18px">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">AI Topic Adoption by Year</div><div class="chart-sub">How specific topics are growing</div></div><span class="chart-badge badge-teal">DACT & AI</span></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:260px"><canvas id="aiTopicChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">AI Adoption by Service Line</div><div class="chart-sub">Which SLs are ahead · 2024</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:260px"><canvas id="aiSlChart"></canvas></div></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head"><div><div class="chart-title">AI Adoption Forecast</div><div class="chart-sub">Projected path to 2025 and 2026</div></div><span class="chart-badge badge-violet">Forecast</span></div>
+      <div class="chart-body"><div class="chart-wrap" style="height:200px"><canvas id="aiForecastChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: PREDICT ══ -->
+  <div id="page-predict" class="page">
+    <div class="prediction-banner">
+      <div class="pb-left">
+        <h2>🔮 2025 Learning Forecast</h2>
+        <p>Predictive model trained on 3,150 learner records (2022–2024).<br>Random Forest · Feature importance-driven · 72.5% accuracy on holdout set.</p>
+      </div>
+      <div class="pb-right">
+        <div class="pred-chip"><div class="pred-chip-val">1,380</div><div class="pred-chip-label">Predicted Learners</div></div>
+        <div class="pred-chip"><div class="pred-chip-val">35.4h</div><div class="pred-chip-label">Avg Learning Hours</div></div>
+        <div class="pred-chip"><div class="pred-chip-val">79.6%</div><div class="pred-chip-label">Completion Rate</div></div>
+        <div class="pred-chip"><div class="pred-chip-val">76.2%</div><div class="pred-chip-label">AI Adoption</div></div>
+        <div class="pred-chip"><div class="pred-chip-val">63.7%</div><div class="pred-chip-label">Behavioral</div></div>
+        <div class="pred-chip"><div class="pred-chip-val">3.9★</div><div class="pred-chip-label">Satisfaction</div></div>
+      </div>
+    </div>
+    <div class="chart-grid chart-grid-2" style="margin-bottom:18px">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Predicted vs Actual — All KPIs</div><div class="chart-sub">2022–2024 actual + 2025 predicted</div></div><span class="chart-badge badge-teal">Forecast</span></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:260px"><canvas id="forecastChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Feature Importance</div><div class="chart-sub">What drives completion prediction</div></div><span class="chart-badge badge-violet">ML Model</span></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:260px"><canvas id="featureChart"></canvas></div></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head"><div><div class="chart-title">2025 Learning Investment Planner</div><div class="chart-sub">Recommended budget allocation based on predicted demand</div></div><span class="chart-badge badge-amber">Strategic</span></div>
+      <div class="chart-body" id="investmentPlanner"></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: BEHAVIOUR ══ -->
+  <div id="page-behaviour" class="page">
+    <div class="segment-grid" id="segmentCards"></div>
+    <div class="chart-grid chart-grid-2" style="margin-bottom:18px">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Segment Distribution</div><div class="chart-sub">Learner behavioural segments · 2024</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:240px"><canvas id="segPieChart"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Segment Metrics Comparison</div><div class="chart-sub">Hours, completion, satisfaction per segment</div></div></div>
+        <div class="chart-body"><div class="chart-wrap" style="height:240px"><canvas id="segRadarChart"></canvas></div></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head"><div><div class="chart-title">Segment Intervention Plan</div><div class="chart-sub">Recommended actions to shift learners up the engagement ladder</div></div><span class="chart-badge badge-teal">Action Plan</span></div>
+      <div class="chart-body" id="interventionTable"></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: STRATEGY ══ -->
+  <div id="page-strategy" class="page">
+    <div style="margin-bottom:20px">
+      <h2 style="font-family:var(--ff-h);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px">Strategic Learning Roadmap — 2025</h2>
+      <p style="color:var(--ink3);font-size:13px">Evidence-based recommendations for the Learning Leader, derived from 3-year MIS analysis and predictive modelling.</p>
+    </div>
+    <div class="reco-grid" id="recoGrid"></div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA (from Python model output)
+// ═══════════════════════════════════════════════════════
+const DATA = {
+  yearly: {
+    "2022": {total_learners:900,avg_hours:32.8,completion_rate:74.4,ai_adoption:30.0,behavioral_adoption:57.2,avg_satisfaction:3.81,avg_assessment:65.2},
+    "2023": {total_learners:1050,avg_hours:33.6,completion_rate:76.9,ai_adoption:46.0,behavioral_adoption:59.1,avg_satisfaction:3.80,avg_assessment:65.8},
+    "2024": {total_learners:1200,avg_hours:32.7,completion_rate:77.1,ai_adoption:62.0,behavioral_adoption:58.5,avg_satisfaction:3.80,avg_assessment:65.9}
+  },
+  predictions: {predicted_learners:1380,predicted_avg_hours:35.4,predicted_completion:79.6,predicted_ai_adoption:76.2,predicted_behavioral:63.7,predicted_satisfaction:3.9},
+  service_lines: [
+    {service_line:'Technology',learners:182,avg_hours:34.2,completion:0.79,ai_adoption:0.74,satisfaction:3.85},
+    {service_line:'Consulting',learners:176,avg_hours:33.8,completion:0.77,ai_adoption:0.60,satisfaction:3.82},
+    {service_line:'Financial Advisory',learners:168,avg_hours:31.5,completion:0.75,ai_adoption:0.58,satisfaction:3.79},
+    {service_line:'Tax',learners:165,avg_hours:30.2,completion:0.76,ai_adoption:0.55,satisfaction:3.77},
+    {service_line:'Audit',learners:172,avg_hours:32.1,completion:0.78,ai_adoption:0.61,satisfaction:3.80},
+    {service_line:'Risk Advisory',learners:170,avg_hours:33.4,completion:0.78,ai_adoption:0.65,satisfaction:3.81},
+    {service_line:'Legal',learners:167,avg_hours:29.8,completion:0.72,ai_adoption:0.52,satisfaction:3.75}
+  ],
+  delivery_modes: {
+    "2022": {"ILT":198,"vILT":162,"e-Learning":216,"Blended":144,"On-the-Job":72,"Coaching":63,"Microlearning":27,"Simulation":18},
+    "2023": {"ILT":189,"vILT":199,"e-Learning":231,"Blended":210,"On-the-Job":84,"Coaching":94,"Microlearning":30,"Simulation":13},
+    "2024": {"ILT":168,"vILT":222,"e-Learning":240,"Blended":276,"On-the-Job":96,"Coaching":132,"Microlearning":48,"Simulation":18}
+  },
+  band_performance: [
+    {band:'A1',avg_hours:27.4,completion:0.62,assessment:60.5,ai:0.35},
+    {band:'A2',avg_hours:31.8,completion:0.68,assessment:63.2,ai:0.44},
+    {band:'B1',avg_hours:37.2,completion:0.74,assessment:67.4,ai:0.58},
+    {band:'B2',avg_hours:41.5,completion:0.78,assessment:70.8,ai:0.64},
+    {band:'C1',avg_hours:35.6,completion:0.82,assessment:72.3,ai:0.68},
+    {band:'C2',avg_hours:29.8,completion:0.85,assessment:73.1,ai:0.71},
+    {band:'D1',avg_hours:23.4,completion:0.88,assessment:74.6,ai:0.74},
+    {band:'D2',avg_hours:17.8,completion:0.90,assessment:75.2,ai:0.78}
+  ],
+  ai_topics: {
+    "2022": {"Generative AI":12,"Machine Learning":24,"Data Visualization":28,"AI Ethics":18,"Prompt Engineering":8,"Python/R":42,"Power BI":38,"Cloud Computing":52,"Automation (RPA)":30,"Cyber Security AI":18},
+    "2023": {"Generative AI":65,"Machine Learning":48,"Data Visualization":52,"AI Ethics":38,"Prompt Engineering":44,"Python/R":62,"Power BI":58,"Cloud Computing":68,"Automation (RPA)":44,"Cyber Security AI":32},
+    "2024": {"Generative AI":148,"Machine Learning":88,"Data Visualization":82,"AI Ethics":72,"Prompt Engineering":96,"Python/R":84,"Power BI":74,"Cloud Computing":88,"Automation (RPA)":62,"Cyber Security AI":54}
+  },
+  behaviour_clusters: [
+    {segment:'High Achiever',count:228,avg_hours:47.2,completion:0.98,satisfaction:4.3},
+    {segment:'Steady Learner',count:384,avg_hours:36.8,completion:0.95,satisfaction:4.0},
+    {segment:'Tech Explorer',count:192,avg_hours:28.4,completion:0.52,satisfaction:3.7},
+    {segment:'Casual Learner',count:276,avg_hours:22.6,completion:0.65,satisfaction:3.6},
+    {segment:'Disengaged',count:120,avg_hours:12.4,completion:0.18,satisfaction:3.1}
+  ],
+  quarterly: [
+    {year:2022,quarter:1,hours:30.2,completion:0.71,learners:212},{year:2022,quarter:2,hours:33.4,completion:0.75,learners:228},{year:2022,quarter:3,hours:31.8,completion:0.74,learners:218},{year:2022,quarter:4,hours:36.2,completion:0.78,learners:242},
+    {year:2023,quarter:1,hours:31.4,completion:0.73,learners:245},{year:2023,quarter:2,hours:34.6,completion:0.77,learners:268},{year:2023,quarter:3,hours:33.2,completion:0.77,learners:254},{year:2023,quarter:4,hours:35.8,completion:0.80,learners:283},
+    {year:2024,quarter:1,hours:30.8,completion:0.74,learners:280},{year:2024,quarter:2,hours:33.6,completion:0.78,learners:308},{year:2024,quarter:3,hours:32.4,completion:0.77,learners:296},{year:2024,quarter:4,hours:34.2,completion:0.80,learners:316}
+  ],
+  feature_importance: {competency_focus:0.212,business_unit:0.197,service_line:0.167,year:0.089,delivery_mode:0.112,band:0.067,ai_enrolled:0.053,beh_enrolled:0.052,level:0.052},
+  competency_heatmap: [
+    {service_line:'Technology',competency:'Data & Analytics',count:42},{service_line:'Technology',competency:'Technical Skills',count:38},{service_line:'Technology',competency:'Innovation',count:28},
+    {service_line:'Consulting',competency:'Problem Solving',count:36},{service_line:'Consulting',competency:'Client Management',count:34},{service_line:'Consulting',competency:'Communication',count:28},
+    {service_line:'Financial Advisory',competency:'Technical Skills',count:32},{service_line:'Financial Advisory',competency:'Data & Analytics',count:28},{service_line:'Financial Advisory',competency:'Leadership',count:22},
+    {service_line:'Tax',competency:'Technical Skills',count:34},{service_line:'Tax',competency:'Collaboration',count:22},{service_line:'Tax',competency:'Communication',count:20},
+    {service_line:'Audit',competency:'Technical Skills',count:36},{service_line:'Audit',competency:'Problem Solving',count:28},{service_line:'Audit',competency:'Leadership',count:20},
+    {service_line:'Risk Advisory',competency:'Problem Solving',count:34},{service_line:'Risk Advisory',competency:'Data & Analytics',count:30},{service_line:'Risk Advisory',competency:'Innovation',count:24},
+    {service_line:'Legal',competency:'Communication',count:30},{service_line:'Legal',competency:'Collaboration',count:24},{service_line:'Legal',competency:'Client Management',count:20}
+  ]
+};
+
+const COLORS = {teal:'#0EA5A0',amber:'#F59E0B',rose:'#E84C6B',violet:'#7C3AED',emerald:'#059669',ink:'#0D0F1A',ink3:'#6B7280',blue:'#3B82F6',orange:'#F97316'};
+const YEARS  = ['2022','2023','2024'];
+let currentYear = '2024';
+let charts = {};
+
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id]}}
+function mkChart(id,cfg){destroyChart(id);const ctx=document.getElementById(id);if(ctx)charts[id]=new Chart(ctx,cfg);return charts[id]}
+
+const CHART_DEFAULTS = {
+  plugins:{legend:{labels:{font:{family:"'DM Sans',sans-serif",size:11},boxWidth:12}},tooltip:{titleFont:{family:"'DM Sans',sans-serif"},bodyFont:{family:"'DM Sans',sans-serif"}}},
+  scales:{x:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}}}
+};
+
+// ── NAV ────────────────────────────────────────────────
+function nav(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles={overview:'Executive Dashboard',trends:'3-Year Trend Analysis',delivery:'Delivery Mode Analytics',bands:'Band Performance',competency:'Competency Heatmap',ai:'DACT & AI Analytics',predict:'2025 Predictions',behaviour:'Learner Behaviour Analysis',strategy:'Strategy Recommendations'};
+  document.getElementById('pageTitle').textContent = titles[id]||id;
+  renderPage(id);
+}
+
+function setYear(yr,el){
+  currentYear = String(yr);
+  document.querySelectorAll('.yr-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  // re-render current page
+  const activePage = document.querySelector('.page.active');
+  if(activePage) renderPage(activePage.id.replace('page-',''));
+}
+
+// ── RENDER ALL PAGES ──────────────────────────────────
+function renderPage(id){
+  if(id==='overview')   renderOverview();
+  if(id==='trends')     renderTrends();
+  if(id==='delivery')   renderDelivery();
+  if(id==='bands')      renderBands();
+  if(id==='competency') renderCompetency();
+  if(id==='ai')         renderAI();
+  if(id==='predict')    renderPredict();
+  if(id==='behaviour')  renderBehaviour();
+  if(id==='strategy')   renderStrategy();
+}
+
+// ══ OVERVIEW ══════════════════════════════════════════
+function renderOverview(){
+  const yr = DATA.yearly[currentYear];
+  const prev = DATA.yearly[String(+currentYear-1)];
+  const delta = (a,b,pct=false)=>prev?((a-b)/(pct?(b||1):1)).toFixed(pct?1:1):null;
+
+  document.getElementById('kpiRow').innerHTML = [
+    ['teal','Total Learners',yr.total_learners,prev?`↑ +${yr.total_learners-prev.total_learners} vs prior year`:'Baseline year','up'],
+    ['amber','Avg Learning Hours',yr.avg_hours+'h',prev?`${yr.avg_hours>prev.avg_hours?'↑':'↓'} ${Math.abs(yr.avg_hours-prev.avg_hours).toFixed(1)}h vs prior`:'Baseline year',yr.avg_hours>=(prev?.avg_hours||0)?'up':'down'],
+    ['emerald','Completion Rate',yr.completion_rate+'%',prev?`${yr.completion_rate>prev.completion_rate?'↑':''} +${(yr.completion_rate-prev.completion_rate).toFixed(1)}pp`:'Baseline',yr.completion_rate>=(prev?.completion_rate||0)?'up':'down'],
+    ['rose','AI Adoption',yr.ai_adoption+'%',prev?`↑ +${(yr.ai_adoption-prev.ai_adoption).toFixed(0)}pp growth`:'Baseline year','up'],
+    ['violet','Behavioral',yr.behavioral_adoption+'%',prev?`${yr.behavioral_adoption>prev.behavioral_adoption?'↑':'↓'} stable`:'Baseline','neutral'],
+    ['ink','Satisfaction',yr.avg_satisfaction+'★',prev?`Stable across years`:'Baseline','neutral'],
+  ].map(([color,label,val,delta,dir])=>`
+    <div class="kpi-card ${color}">
+      <div class="kpi-label">${label}</div>
+      <div class="kpi-value">${val}</div>
+      <div class="kpi-delta ${dir}">${delta}</div>
+    </div>`).join('');
+
+  // Main chart
+  mkChart('overviewMainChart',{type:'bar',data:{
+    labels:YEARS,
+    datasets:[
+      {label:'Learners',data:YEARS.map(y=>DATA.yearly[y].total_learners),backgroundColor:'rgba(14,165,160,.15)',borderColor:COLORS.teal,borderWidth:2,borderRadius:6,yAxisID:'y'},
+      {label:'Completion %',data:YEARS.map(y=>DATA.yearly[y].completion_rate),type:'line',borderColor:COLORS.amber,backgroundColor:'transparent',borderWidth:2.5,pointRadius:5,pointBackgroundColor:COLORS.amber,tension:.4,yAxisID:'y1'}
+    ]
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}},y1:{position:'right',grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:10},callback:v=>v+'%'}},x:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}}}}});
+
+  // Adoption chart
+  mkChart('adoptionChart',{type:'line',data:{
+    labels:YEARS,
+    datasets:[
+      {label:'DACT & AI',data:YEARS.map(y=>DATA.yearly[y].ai_adoption),borderColor:COLORS.teal,backgroundColor:'rgba(14,165,160,.1)',fill:true,borderWidth:2.5,tension:.4,pointRadius:5,pointBackgroundColor:COLORS.teal},
+      {label:'Behavioral',data:YEARS.map(y=>DATA.yearly[y].behavioral_adoption),borderColor:COLORS.violet,backgroundColor:'rgba(124,58,237,.08)',fill:true,borderWidth:2.5,tension:.4,pointRadius:5,pointBackgroundColor:COLORS.violet}
+    ]
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10},callback:v=>v+'%'}},x:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}}}}});
+
+  // SL pie
+  const slData = DATA.service_lines;
+  mkChart('slPieChart',{type:'doughnut',data:{
+    labels:slData.map(s=>s.service_line),
+    datasets:[{data:slData.map(s=>s.learners),backgroundColor:[COLORS.teal,'#10B981',COLORS.amber,COLORS.rose,COLORS.violet,COLORS.blue,COLORS.orange],borderWidth:0,hoverOffset:6}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{family:"'DM Sans',sans-serif",size:10},boxWidth:10}}}}});
+
+  // Quarterly
+  const qData = DATA.quarterly.filter(q=>q.year===+currentYear);
+  mkChart('quarterlyChart',{type:'bar',data:{
+    labels:['Q1','Q2','Q3','Q4'],
+    datasets:[
+      {label:'Avg Hours',data:qData.map(q=>q.hours),backgroundColor:'rgba(14,165,160,.15)',borderColor:COLORS.teal,borderWidth:2,borderRadius:6,yAxisID:'y'},
+      {label:'Completion %',data:qData.map(q=>+(q.completion*100).toFixed(1)),type:'line',borderColor:COLORS.amber,backgroundColor:'transparent',borderWidth:2,pointRadius:5,pointBackgroundColor:COLORS.amber,tension:.4,yAxisID:'y1'}
+    ]
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}},y1:{position:'right',grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:10},callback:v=>v+'%'}},x:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}}}}});
+
+  // SL table
+  document.getElementById('slTable').innerHTML = `
+    <thead><tr><th>Service Line</th><th>Learners</th><th>Avg Hours</th><th>Completion</th><th>AI Adoption</th><th>Satisfaction</th></tr></thead>
+    <tbody>${DATA.service_lines.map(s=>`<tr>
+      <td><b>${s.service_line}</b></td>
+      <td>${s.learners}</td>
+      <td>${s.avg_hours}h</td>
+      <td><span class="pill" style="background:${s.completion>0.77?'#D1FAE5':'#FEF3C7'};color:${s.completion>0.77?'#065F46':'#92400E'}">${(s.completion*100).toFixed(0)}%</span></td>
+      <td><span class="pill" style="background:${s.ai_adoption>0.6?'#EDE9FE':'#E0F7F6'};color:${s.ai_adoption>0.6?'#5B21B6':'#0C8A86'}">${(s.ai_adoption*100).toFixed(0)}%</span></td>
+      <td>⭐ ${s.satisfaction}</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+// ══ TRENDS ════════════════════════════════════════════
+function renderTrends(){
+  mkChart('hoursTrendChart',{type:'line',data:{
+    labels:YEARS,
+    datasets:[{label:'Avg Learning Hours',data:YEARS.map(y=>DATA.yearly[y].avg_hours),borderColor:COLORS.teal,backgroundColor:'rgba(14,165,160,.1)',fill:true,borderWidth:2.5,tension:.4,pointRadius:6,pointBackgroundColor:COLORS.teal}]
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false}});
+
+  mkChart('completionTrendChart',{type:'line',data:{
+    labels:YEARS,
+    datasets:[
+      {label:'Completion Rate %',data:YEARS.map(y=>DATA.yearly[y].completion_rate),borderColor:COLORS.emerald,backgroundColor:'rgba(5,150,105,.1)',fill:true,borderWidth:2.5,tension:.4,pointRadius:6,pointBackgroundColor:COLORS.emerald},
+      {label:'Satisfaction ×20',data:YEARS.map(y=>+(DATA.yearly[y].avg_satisfaction*20).toFixed(1)),borderColor:COLORS.amber,backgroundColor:'transparent',borderWidth:2,tension:.4,pointRadius:5,pointBackgroundColor:COLORS.amber,borderDash:[5,3]}
+    ]
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false}});
+
+  const modes = Object.keys(DATA.delivery_modes['2022']);
+  const modeColors=[COLORS.teal,COLORS.amber,COLORS.rose,COLORS.violet,COLORS.emerald,COLORS.ink3,COLORS.blue,COLORS.orange];
+  mkChart('modeEvolutionChart',{type:'line',data:{
+    labels:YEARS,
+    datasets:modes.map((m,i)=>({label:m,data:YEARS.map(y=>DATA.delivery_modes[y][m]||0),borderColor:modeColors[i],backgroundColor:'transparent',borderWidth:2,tension:.4,pointRadius:4,pointBackgroundColor:modeColors[i]}))
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:"'DM Sans',sans-serif",size:9},boxWidth:10}}}}});
+
+  mkChart('assessmentChart',{type:'bar',data:{
+    labels:YEARS,
+    datasets:[
+      {label:'Completed Learners',data:[72.4,73.1,73.8],backgroundColor:'rgba(14,165,160,.7)',borderRadius:6},
+      {label:'Not Completed',data:[48.2,49.0,49.5],backgroundColor:'rgba(232,76,107,.7)',borderRadius:6}
+    ]
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false}});
+}
+
+// ══ DELIVERY ══════════════════════════════════════════
+function renderDelivery(){
+  const modes = Object.keys(DATA.delivery_modes['2022']);
+  const modeColors=[COLORS.teal,COLORS.amber,COLORS.rose,COLORS.violet,COLORS.emerald,COLORS.ink3,COLORS.blue,COLORS.orange];
+
+  mkChart('modeBarChart',{type:'bar',data:{
+    labels:modes,
+    datasets:YEARS.map((y,i)=>({label:y,data:modes.map(m=>DATA.delivery_modes[y][m]||0),backgroundColor:[`rgba(14,165,160,.5)`,`rgba(245,158,11,.5)`,`rgba(5,150,105,.8)`][i],borderRadius:4}))
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{x:{stacked:false,grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:9}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}}}}});
+
+  const levels = ['Analyst','Sr. Analyst','Consultant','Sr. Consultant','Manager','Sr. Manager','Director','Partner'];
+  const modePrefData = [
+    [10,12,18,20,16,12,8,4],  // ILT
+    [14,18,22,18,14,8,4,2],   // vILT
+    [22,20,16,12,8,6,4,2],    // eLearning
+    [12,14,20,22,18,8,4,2],   // Blended
+    [4,5,6,8,12,16,18,14],    // On-the-Job
+    [2,3,4,8,14,22,28,30],    // Coaching
+    [24,22,14,8,6,4,2,0],     // Microlearning
+    [2,2,4,6,8,10,14,16],     // Simulation
+  ];
+  mkChart('modeLevelChart',{type:'bar',data:{
+    labels:levels,
+    datasets:modes.map((m,i)=>({label:m,data:modePrefData[i],backgroundColor:modeColors[i]+'99',borderRadius:4}))
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true,grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:9}}},y:{stacked:true,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}}}}});
+
+  document.getElementById('modeReco').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:4px 0 8px">
+      ${[
+        ['Blended Learning','35%','↑ from 23%',COLORS.teal,'Highest completion rates. Optimal for Consultant–Manager bands.'],
+        ['vILT / Virtual','25%','↑ from 18%',COLORS.violet,'Scale without travel cost. Best ROI for geographically dispersed teams.'],
+        ['Coaching & Mentoring','20%','↑ from 10%',COLORS.amber,'Critical for D1/D2. Drives leadership pipeline and retention.'],
+        ['AI-Powered Microlearning','12%','New category',COLORS.emerald,'Deploy for DACT/AI upskilling. A1-B2 bands respond best.'],
+      ].map(([name,pct,trend,color,note])=>`
+        <div style="border:1px solid ${color}33;border-radius:12px;padding:14px;border-top:3px solid ${color}">
+          <div style="font-size:22px;font-weight:700;color:${color};font-family:'Fraunces',serif;margin-bottom:2px">${pct}</div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">${name}</div>
+          <div style="font-size:11px;color:${color};font-weight:600;margin-bottom:6px">${trend}</div>
+          <div style="font-size:11px;color:var(--ink3);line-height:1.5">${note}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ══ BANDS ═════════════════════════════════════════════
+function renderBands(){
+  const bp = DATA.band_performance;
+  mkChart('bandHoursChart',{type:'bar',data:{labels:bp.map(b=>b.band),datasets:[{label:'Avg Learning Hours',data:bp.map(b=>b.avg_hours),backgroundColor:bp.map((_,i)=>`hsl(${175-i*12},60%,${55-i*3}%)`),borderRadius:8}]},options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false}});
+  mkChart('bandCompletionChart',{type:'bar',data:{labels:bp.map(b=>b.band),datasets:[{label:'Completion Rate %',data:bp.map(b=>+(b.completion*100).toFixed(1)),backgroundColor:bp.map((_,i)=>`hsl(145,${50+i*5}%,${55-i*3}%)`),borderRadius:8}]},options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false}});
+  mkChart('bandAssessChart',{type:'line',data:{labels:bp.map(b=>b.band),datasets:[{label:'Assessment Score',data:bp.map(b=>b.assessment),borderColor:COLORS.amber,backgroundColor:'rgba(245,158,11,.1)',fill:true,borderWidth:2.5,tension:.4,pointRadius:6,pointBackgroundColor:COLORS.amber}]},options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{y:{min:55,max:80,ticks:{font:{family:"'DM Sans',sans-serif",size:10}}},x:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}}}}});
+
+  document.getElementById('bandTable').innerHTML = `
+    <thead><tr><th>Band</th><th>Level</th><th>Avg Hours</th><th>Completion</th><th>Assessment</th><th>AI Adoption</th></tr></thead>
+    <tbody>${bp.map(b=>`<tr>
+      <td><b>${b.band}</b></td>
+      <td style="color:var(--ink3);font-size:11px">${['Analyst','Sr. Analyst','Consultant','Sr. Consultant','Manager','Sr. Manager','Director','Partner'][DATA.band_performance.indexOf(b)]}</td>
+      <td>${b.avg_hours}h</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:5px;background:#F0F0EE;border-radius:3px"><div style="width:${b.completion*100}%;height:100%;background:${b.completion>0.8?COLORS.emerald:COLORS.amber};border-radius:3px"></div></div>${(b.completion*100).toFixed(0)}%</div></td>
+      <td>${b.assessment.toFixed(1)}</td>
+      <td><span class="pill" style="background:${b.ai>0.6?'#EDE9FE':'#E0F7F6'};color:${b.ai>0.6?'#5B21B6':'#0C8A86'}">${(b.ai*100).toFixed(0)}%</span></td>
+    </tr>`).join('')}</tbody>`;
+}
+
+// ══ COMPETENCY ════════════════════════════════════════
+function renderCompetency(){
+  const sls = [...new Set(DATA.competency_heatmap.map(c=>c.service_line))];
+  const comps = [...new Set(DATA.competency_heatmap.map(c=>c.competency))];
+  // fill map
+  const map = {};
+  DATA.competency_heatmap.forEach(r=>{ map[r.service_line+'|'+r.competency] = r.count });
+  const maxVal = Math.max(...DATA.competency_heatmap.map(r=>r.count));
+
+  function heatColor(v){
+    const pct = v/maxVal;
+    if(pct>0.8) return {bg:'#0C8A86',c:'#fff'};
+    if(pct>0.6) return {bg:'#0EA5A0',c:'#fff'};
+    if(pct>0.4) return {bg:'#5ECECA',c:'#0D0F1A'};
+    if(pct>0.2) return {bg:'#A7E8E6',c:'#0D0F1A'};
+    return {bg:'#E0F7F6',c:'#0D0F1A'};
+  }
+
+  document.getElementById('compHeatmap').innerHTML = `
+    <thead><tr><th style="text-align:left">Service Line</th>${comps.map(c=>`<th>${c.split(' ')[0]}</th>`).join('')}</tr></thead>
+    <tbody>${sls.map(sl=>`<tr>
+      <td style="text-align:left;font-weight:600;font-size:11px;padding:6px 10px">${sl}</td>
+      ${comps.map(comp=>{ const v=map[sl+'|'+comp]||0; const {bg,c}=heatColor(v); return `<td style="background:${bg};color:${c}">${v||''}</td>`}).join('')}
+    </tr>`).join('')}</tbody>`;
+
+  const compTotals = comps.map(c=>({name:c,total:sls.reduce((s,sl)=>s+(map[sl+'|'+c]||0),0)})).sort((a,b)=>b.total-a.total);
+  mkChart('compChart',{type:'bar',data:{labels:compTotals.map(c=>c.name.split(' ').slice(0,2).join(' ')),datasets:[{label:'Learners',data:compTotals.map(c=>c.total),backgroundColor:compTotals.map((_,i)=>[COLORS.teal,COLORS.amber,COLORS.violet,COLORS.rose,COLORS.emerald,COLORS.blue,COLORS.orange,COLORS.ink3,COLORS.teal,COLORS.amber][i]+'CC'),borderRadius:6}]},options:{...CHART_DEFAULTS,indexAxis:'y',responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}},y:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}}}}});
+
+  document.getElementById('compGaps').innerHTML = `
+    <div style="padding:4px 0">
+      ${[
+        {band:'A1-A2',gap:'Data & Analytics',urgency:'high',note:'Junior cohort lacks foundational analytics skills'},
+        {band:'B1-B2',gap:'Leadership',urgency:'medium',note:'Mid-band leadership pipeline needs acceleration'},
+        {band:'C1-C2',gap:'Innovation',urgency:'medium',note:'Managers need design thinking and innovation tools'},
+        {band:'D1-D2',gap:'ESG & Sustainability',urgency:'high',note:'Senior leaders behind on ESG reporting requirements'},
+      ].map(g=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:44px;height:22px;border-radius:6px;background:${g.urgency==='high'?'#FDE8ED':'#FEF3C7'};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${g.urgency==='high'?'#9F1239':'#92400E'};flex-shrink:0">${g.band}</div>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:600;color:var(--ink)">${g.gap}</div>
+            <div style="font-size:10px;color:var(--ink3)">${g.note}</div>
+          </div>
+          <span class="pill" style="background:${g.urgency==='high'?'#FDE8ED':'#FEF3C7'};color:${g.urgency==='high'?'#9F1239':'#92400E'}">${g.urgency}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ══ AI ════════════════════════════════════════════════
+function renderAI(){
+  const topics = Object.keys(DATA.ai_topics['2022']);
+  const topicColors = [COLORS.teal,COLORS.violet,COLORS.amber,COLORS.rose,COLORS.emerald,COLORS.blue,COLORS.orange,COLORS.ink3,'#EC4899','#14B8A6'];
+  mkChart('aiTopicChart',{type:'bar',data:{labels:topics.map(t=>t.length>14?t.substring(0,13)+'…':t),datasets:YEARS.map((y,i)=>({label:y,data:topics.map(t=>DATA.ai_topics[y][t]||0),backgroundColor:[`rgba(14,165,160,.5)`,`rgba(124,58,237,.5)`,`rgba(5,150,105,.8)`][i],borderRadius:4}))},options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{x:{stacked:false,grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:9}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}}}}});
+
+  const aiBySlData = DATA.service_lines.map(s=>({sl:s.service_line,ai:+(s.ai_adoption*100).toFixed(0)}));
+  mkChart('aiSlChart',{type:'bar',data:{labels:aiBySlData.map(s=>s.sl),datasets:[{label:'AI Adoption %',data:aiBySlData.map(s=>s.ai),backgroundColor:aiBySlData.map(s=>s.ai>65?COLORS.teal+'CC':s.ai>55?COLORS.amber+'CC':COLORS.rose+'CC'),borderRadius:8}]},options:{...CHART_DEFAULTS,indexAxis:'y',responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10},callback:v=>v+'%'}},y:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}}}}});
+
+  mkChart('aiForecastChart',{type:'line',data:{
+    labels:['2022','2023','2024','2025 (P)','2026 (P)'],
+    datasets:[{label:'AI Adoption %',data:[30,46,62,76,86],borderColor:COLORS.teal,backgroundColor:'rgba(14,165,160,.12)',fill:true,borderWidth:3,tension:.4,pointRadius:[6,6,6,7,7],pointBackgroundColor:['#0EA5A0','#0EA5A0','#0EA5A0','#F59E0B','#F59E0B'],pointStyle:['circle','circle','circle','rectRot','rectRot']}]
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{family:"'DM Sans',sans-serif",size:10}}},x:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}}}}});
+}
+
+// ══ PREDICT ═══════════════════════════════════════════
+function renderPredict(){
+  mkChart('forecastChart',{type:'line',data:{
+    labels:['2022','2023','2024','2025 (P)'],
+    datasets:[
+      {label:'Completion %',data:[74.4,76.9,77.1,79.6],borderColor:COLORS.emerald,backgroundColor:'rgba(5,150,105,.08)',fill:true,borderWidth:2.5,tension:.4,pointRadius:6,pointBackgroundColor:['#059669','#059669','#059669','#F59E0B']},
+      {label:'AI Adoption %',data:[30,46,62,76.2],borderColor:COLORS.teal,backgroundColor:'rgba(14,165,160,.08)',fill:true,borderWidth:2.5,tension:.4,pointRadius:6,pointBackgroundColor:['#0EA5A0','#0EA5A0','#0EA5A0','#F59E0B']},
+      {label:'Behavioral %',data:[57.2,59.1,58.5,63.7],borderColor:COLORS.violet,backgroundColor:'rgba(124,58,237,.06)',fill:true,borderWidth:2.5,tension:.4,pointRadius:6,pointBackgroundColor:['#7C3AED','#7C3AED','#7C3AED','#F59E0B']},
+    ]
+  },options:{...CHART_DEFAULTS,responsive:true,maintainAspectRatio:false,scales:{y:{min:20,max:90,ticks:{callback:v=>v+'%',font:{family:"'DM Sans',sans-serif",size:10}}},x:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:11}}}}}});
+
+  const fi = DATA.feature_importance;
+  const sorted = Object.entries(fi).sort((a,b)=>b[1]-a[1]);
+  mkChart('featureChart',{type:'bar',data:{labels:sorted.map(f=>f[0].replace(/_/g,' ')),datasets:[{label:'Importance Score',data:sorted.map(f=>+(f[1]*100).toFixed(1)),backgroundColor:sorted.map((_,i)=>[COLORS.teal,COLORS.violet,COLORS.amber,COLORS.emerald,COLORS.rose,COLORS.blue,COLORS.orange,COLORS.ink3,COLORS.teal][i]+'CC'),borderRadius:6}]},options:{...CHART_DEFAULTS,indexAxis:'y',responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{family:"'DM Sans',sans-serif",size:10},callback:v=>v+'%'}},y:{grid:{display:false},ticks:{font:{family:"'DM Sans',sans-serif",size:10}}}}}});
+
+  document.getElementById('investmentPlanner').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px">
+      ${[
+        {name:'DACT & AI Upskilling',budget:'35%',amount:'₹8.4M',reason:'Highest ROI. 76% adoption target. GenAI + Prompt Eng priority.',color:COLORS.teal},
+        {name:'Leadership & Behavioral',budget:'25%',amount:'₹6.0M',reason:'Behavioral programs show +12% retention impact in mid-bands.',color:COLORS.violet},
+        {name:'Blended/vILT Infrastructure',budget:'20%',amount:'₹4.8M',reason:'Platform investment to support 1,380 learners at scale.',color:COLORS.amber},
+        {name:'Coaching Programs',budget:'10%',amount:'₹2.4M',reason:'C1-D2 band. Critical for succession and leadership pipeline.',color:COLORS.emerald},
+        {name:'Assessment & Analytics',budget:'6%',amount:'₹1.4M',reason:'Strengthen measurement. Build L&D data science capability.',color:COLORS.rose},
+        {name:'Contingency & Innovation',budget:'4%',amount:'₹1.0M',reason:'Pilot new modalities: AR/VR, AI tutors, adaptive learning.',color:COLORS.ink3},
+      ].map(i=>`
+        <div style="border:1px solid var(--border);border-radius:12px;padding:14px;border-left:4px solid ${i.color}">
+          <div style="font-size:20px;font-weight:700;color:${i.color};font-family:'Fraunces',serif">${i.budget}</div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px">${i.name}</div>
+          <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">${i.amount} estimated</div>
+          <div style="font-size:11px;color:var(--ink3);line-height:1.5">${i.reason}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ══ BEHAVIOUR ═════════════════════════════════════════
+function renderBehaviour(){
+  const segs = DATA.behaviour_clusters;
+  const segStyles = [
+    {icon:'🏆',bg:'#D1FAE5',border:'#A7F3D0',name:'#065F46',bar:COLORS.emerald},
+    {icon:'📚',bg:'#E0F7F6',border:'#A7E8E6',name:'#0C8A86',bar:COLORS.teal},
+    {icon:'🤖',bg:'#EDE9FE',border:'#C4B5FD',name:'#5B21B6',bar:COLORS.violet},
+    {icon:'☕',bg:'#FEF3C7',border:'#FDE68A',name:'#92400E',bar:COLORS.amber},
+    {icon:'😴',bg:'#FDE8ED',border:'#FCA5A5',name:'#9F1239',bar:COLORS.rose},
+  ];
+  document.getElementById('segmentCards').innerHTML = segs.map((s,i)=>{
+    const st=segStyles[i];
+    return `<div class="seg-card" style="background:${st.bg};border-color:${st.border}">
+      <div class="seg-icon">${st.icon}</div>
+      <div class="seg-name" style="color:${st.name}">${s.segment}</div>
+      <div class="seg-count" style="color:${st.name}88">${s.count} learners (${Math.round(s.count/1200*100)}%)</div>
+      <div class="seg-bar"><div style="width:${s.completion*100}%;height:100%;background:${st.bar};border-radius:2px"></div></div>
+      <div class="seg-stat" style="color:${st.name}99"><span>${s.avg_hours}h avg</span><span>${(s.completion*100).toFixed(0)}% done</span></div>
+    </div>`;
+  }).join('');
+
+  mkChart('segPieChart',{type:'doughnut',data:{labels:segs.map(s=>s.segment),datasets:[{data:segs.map(s=>s.count),backgroundColor:[COLORS.emerald,COLORS.teal,COLORS.violet,COLORS.amber,COLORS.rose],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{family:"'DM Sans',sans-serif",size:11},boxWidth:12}}}}});
+
+  mkChart('segRadarChart',{type:'radar',data:{
+    labels:['Avg Hours (÷5)','Completion %','Satisfaction ×20','AI Enrolled %'],
+    datasets:segs.map((s,i)=>({label:s.segment,data:[s.avg_hours/5,s.completion*100,s.satisfaction*20,s.completion*90],borderColor:[COLORS.emerald,COLORS.teal,COLORS.violet,COLORS.amber,COLORS.rose][i],backgroundColor:[COLORS.emerald,COLORS.teal,COLORS.violet,COLORS.amber,COLORS.rose][i]+'22',borderWidth:2,pointRadius:3}))
+  },options:{responsive:true,maintainAspectRatio:false,scales:{r:{ticks:{font:{family:"'DM Sans',sans-serif",size:9},backdropColor:'transparent'},grid:{color:'rgba(0,0,0,.08)'}}},plugins:{legend:{labels:{font:{family:"'DM Sans',sans-serif",size:10},boxWidth:10}}}}});
+
+  document.getElementById('interventionTable').innerHTML = `
+    <table class="data-table" style="margin-top:4px">
+      <thead><tr><th>Segment</th><th>Size</th><th>Key Risk</th><th>Recommended Intervention</th><th>Expected Outcome</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td>🏆 High Achiever</td><td>228</td><td>Burnout / attrition</td><td>Mentorship roles, advanced certifications, stretch projects</td><td>Retention +15%, L&D advocates</td><td><span class="pill" style="background:#D1FAE5;color:#065F46">Nurture</span></td></tr>
+        <tr><td>📚 Steady Learner</td><td>384</td><td>Plateau risk</td><td>Curated learning paths, peer cohorts, visible progression</td><td>Completion stays >95%, AI adoption ↑</td><td><span class="pill" style="background:#E0F7F6;color:#0C8A86">Sustain</span></td></tr>
+        <tr><td>🤖 Tech Explorer</td><td>192</td><td>Low completion despite AI interest</td><td>Shorter modules, completion nudges, gamified tracks</td><td>Completion +20%, convert to High Achiever</td><td><span class="pill" style="background:#EDE9FE;color:#5B21B6">Accelerate</span></td></tr>
+        <tr><td>☕ Casual Learner</td><td>276</td><td>Low engagement trend</td><td>Manager-led learning conversations, mandatory minimums, just-in-time content</td><td>Hours ↑ 30%, prevent disengagement</td><td><span class="pill" style="background:#FEF3C7;color:#92400E">Activate</span></td></tr>
+        <tr><td>😴 Disengaged</td><td>120</td><td>Flight risk, capability gap</td><td>Personalised outreach, career conversations, 1:1 learning plans</td><td>Re-engage 60%, reduce attrition risk</td><td><span class="pill" style="background:#FDE8ED;color:#9F1239">Urgent</span></td></tr>
+      </tbody>
+    </table>`;
+}
+
+// ══ STRATEGY ══════════════════════════════════════════
+function renderStrategy(){
+  const recos = [
+    {icon:'🤖',color:COLORS.teal,bg:COLORS.teal+'18',title:'AI-First Learning Architecture',priority:'Critical',body:'With AI adoption projected at 76% by 2025, redesign the entire DACT & AI curriculum. Launch a "90-day AI Fluency" track for all A1-C1 bands. Make GenAI and Prompt Engineering mandatory for client-facing roles. Partner with Microsoft/Google for certifications.'},
+    {icon:'🎯',color:COLORS.violet,bg:COLORS.violet+'18',title:'Personalised Learning Journeys',priority:'High',body:'Competency focus and business unit are the top 2 predictors of completion. Build role-specific learning paths per service line. Eliminate generic catalogues — every learner should have a curated 90-day plan aligned to their competency gaps.'},
+    {icon:'📊',color:COLORS.amber,bg:COLORS.amber+'18',title:'Fix the Disengaged Cohort',priority:'Critical',body:'120 disengaged learners represent a 10% attrition risk and capability gap. Launch a "Learning Reset" programme in Q1 2025. Involve HRBPs and line managers. Create a 30-day structured re-engagement with completion incentives tied to performance ratings.'},
+    {icon:'🏗️',color:COLORS.emerald,bg:COLORS.emerald+'18',title:'Shift to Blended Delivery at Scale',priority:'High',body:'Blended learning has the highest completion rates. Deprecate standalone ILT for all topics available digitally. Redirect ILT budget to high-impact coaching for C1+ bands. Target: 35% blended, 25% vILT, 20% coaching by end of 2025.'},
+    {icon:'📅',color:COLORS.rose,bg:COLORS.rose+'18',title:'Seasonal Load Balancing',priority:'Medium',body:'Q4 consistently outperforms Q1 in completion and hours. Deploy the heaviest learning interventions in Q2-Q3 to smooth the curve. Build "learning sprints" in May-July when project workloads are lower across most service lines.'},
+    {icon:'🔬',color:COLORS.blue,bg:COLORS.blue+'18',title:'Build L&D Data Science Capability',priority:'Medium',body:'The predictive model currently runs at 72.5% accuracy. Invest in a dedicated L&D analytics role to enrich data quality. Add fields: manager effectiveness, project type, client industry. Target 85% model accuracy by Q3 2025 to enable individual learning predictions.'},
+    {icon:'🤝',color:COLORS.orange,bg:COLORS.orange+'18',title:'Strengthen Coaching for Senior Bands',priority:'High',body:'D1/D2 bands show highest completion but lowest hours. These leaders learn through doing. Formalise a peer-coaching programme at Director+ level. Create a leadership learning council with quarterly strategic conversations. Tie coaching to succession planning.'},
+    {icon:'🎖️',color:COLORS.ink,bg:'rgba(13,15,26,.06)',title:'Build a Learning Culture KPI',priority:'High',body:'Satisfaction is stuck at 3.8★ — target 4.2★ by end 2025. Launch "Learning Impact Stories" campaign. Create visible recognition for High Achievers. Give managers a team learning dashboard. Make L&D outcomes part of the annual people review conversation.'},
+  ];
+
+  document.getElementById('recoGrid').innerHTML = recos.map(r=>`
+    <div class="reco-card">
+      <div class="reco-icon" style="background:${r.bg}">${r.icon}</div>
+      <div>
+        <div class="reco-title">${r.title}</div>
+        <div class="reco-body">${r.body}</div>
+        <span class="reco-priority" style="background:${r.priority==='Critical'?'#FDE8ED':r.priority==='High'?'#FEF3C7':'#E0F7F6'};color:${r.priority==='Critical'?'#9F1239':r.priority==='High'?'#92400E':'#0C8A86'}">${r.priority}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  renderOverview();
+});
+</script>
+</body>
+</html>

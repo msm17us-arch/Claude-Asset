@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnForward — Predictive Learning Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #07080d;
+  --bg2: #0d0f18;
+  --bg3: #131620;
+  --bg4: #1a1e2e;
+  --bg5: #212640;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --text: #e2e4f0;
+  --text2: #8891b0;
+  --text3: #454c6b;
+  --accent: #7c6fff;
+  --accent2: #5b4fd4;
+  --teal: #00d4a8;
+  --coral: #ff6b6b;
+  --gold: #fbbf24;
+  --blue: #60a5fa;
+  --green: #34d399;
+  --pink: #f472b6;
+  --font: 'Space Grotesk', sans-serif;
+  --mono: 'Space Mono', monospace;
+  --r: 10px;
+  --r-sm: 6px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.6; overflow-x: hidden; }
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--bg2); } ::-webkit-scrollbar-thumb { background: var(--bg5); border-radius: 2px; }
+
+/* ── APP SHELL ── */
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: 200px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.main { flex: 1; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.logo { padding: 18px 16px; border-bottom: 1px solid var(--border); }
+.logo-text { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+.logo-text span { color: var(--accent); }
+.logo-sub { font-size: 9px; color: var(--text3); letter-spacing: .15em; text-transform: uppercase; margin-top: 2px; }
+.nav { padding: 10px 8px; flex: 1; }
+.nav-group { margin-bottom: 16px; }
+.nav-group-label { font-size: 9px; color: var(--text3); letter-spacing: .12em; text-transform: uppercase; padding: 0 8px; margin-bottom: 5px; }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--r-sm); cursor: pointer; color: var(--text2); font-size: 12px; font-weight: 500; transition: all .15s; border: 1px solid transparent; }
+.nav-item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .7; }
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: rgba(124,111,255,0.12); color: var(--accent); border-color: rgba(124,111,255,0.2); }
+.nav-item.active svg { opacity: 1; }
+.sidebar-bottom { padding: 12px 16px; border-top: 1px solid var(--border); }
+.data-status { font-size: 10px; color: var(--text3); }
+.data-status span { color: var(--teal); font-family: var(--mono); }
+
+/* ── CONTENT ── */
+.screen { display: none; } .screen.active { display: block; }
+.page-head { padding: 24px 28px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.page-title { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; line-height: 1.2; }
+.page-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.page-content { padding: 24px 28px; }
+.head-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--r-sm); font-family: var(--font); font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; border: 1px solid transparent; white-space: nowrap; }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent2); }
+.btn-primary:hover { background: var(--accent2); }
+.btn-ghost { background: transparent; color: var(--text2); border-color: var(--border2); }
+.btn-ghost:hover { background: var(--bg3); color: var(--text); }
+.btn-teal { background: rgba(0,212,168,0.1); color: var(--teal); border-color: rgba(0,212,168,0.2); }
+.btn-teal:hover { background: rgba(0,212,168,0.18); }
+
+/* ── CARDS ── */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.card-head { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 12px; font-weight: 600; color: var(--text); }
+.card-body { padding: 16px; }
+.card-sub { font-size: 11px; color: var(--text2); }
+
+/* ── STAT CARDS ── */
+.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+.stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; }
+.stat-val { font-size: 22px; font-weight: 600; font-family: var(--mono); line-height: 1; margin-bottom: 4px; }
+.stat-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; }
+.stat-delta { font-size: 10px; font-family: var(--mono); margin-top: 4px; }
+.delta-up { color: var(--green); } .delta-down { color: var(--coral); }
+
+/* ── GRID ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* ── CHARTS ── */
+.chart-wrap { position: relative; }
+.chart-wrap canvas { width: 100% !important; }
+
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 600; font-family: var(--mono); }
+.badge-purple { background: rgba(124,111,255,0.15); color: var(--accent); }
+.badge-teal { background: rgba(0,212,168,0.12); color: var(--teal); }
+.badge-coral { background: rgba(255,107,107,0.12); color: var(--coral); }
+.badge-gold { background: rgba(251,191,36,0.12); color: var(--gold); }
+.badge-green { background: rgba(52,211,153,0.12); color: var(--green); }
+.badge-blue { background: rgba(96,165,250,0.12); color: var(--blue); }
+
+/* ── TABLE ── */
+.data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.data-table th { padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--border); }
+.data-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg3); color: var(--text); }
+.data-table .highlight { color: var(--text); font-weight: 500; }
+
+/* ── PROGRESS BARS ── */
+.prog-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 2px; transition: width .6s ease; }
+
+/* ── FORMS ── */
+.form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.form-group { }
+.form-label { font-size: 11px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
+.form-input, .form-select { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r-sm); padding: 8px 10px; font-family: var(--font); font-size: 12px; color: var(--text); outline: none; transition: border-color .15s; }
+.form-input:focus, .form-select:focus { border-color: var(--accent); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 3.5l3 3 3-3' stroke='%238891b0' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 26px; }
+option { background: var(--bg3); }
+.form-textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r-sm); padding: 8px 10px; font-family: var(--font); font-size: 12px; color: var(--text); outline: none; resize: vertical; min-height: 80px; }
+
+/* ── PREDICTION BANDS ── */
+.pred-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.pred-metric { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; }
+.pred-value { font-size: 24px; font-weight: 600; font-family: var(--mono); }
+.pred-range { font-size: 10px; color: var(--text2); font-family: var(--mono); }
+.pred-confidence { display: flex; align-items: center; gap: 6px; }
+.conf-bar { flex: 1; height: 3px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.conf-fill { height: 100%; border-radius: 2px; }
+.conf-label { font-size: 10px; font-family: var(--mono); }
+
+/* ── INSIGHT CARDS ── */
+.insight { background: var(--bg3); border-radius: var(--r-sm); padding: 12px 14px; border-left: 3px solid transparent; margin-bottom: 8px; }
+.insight.risk { border-left-color: var(--coral); }
+.insight.opportunity { border-left-color: var(--teal); }
+.insight.warning { border-left-color: var(--gold); }
+.insight-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.insight-type { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+.insight.risk .insight-type { color: var(--coral); }
+.insight.opportunity .insight-type { color: var(--teal); }
+.insight.warning .insight-type { color: var(--gold); }
+.insight-title { font-size: 12px; font-weight: 500; color: var(--text); }
+.insight-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; min-height: 500px; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r); padding: 24px; width: 100%; max-width: 560px; }
+.modal-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.modal-sub { font-size: 12px; color: var(--text2); margin-bottom: 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone { border: 1px dashed var(--border2); border-radius: var(--r); padding: 32px 20px; text-align: center; cursor: pointer; transition: all .2s; background: var(--bg3); }
+.upload-zone:hover { border-color: var(--accent); background: rgba(124,111,255,0.04); }
+.upload-icon { margin-bottom: 8px; opacity: .4; }
+.upload-label { font-size: 13px; color: var(--text2); margin-bottom: 4px; }
+.upload-sub { font-size: 11px; color: var(--text3); }
+
+/* ── SCENARIO SLIDERS ── */
+.slider-group { margin-bottom: 14px; }
+.slider-head { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.slider-label { font-size: 12px; color: var(--text2); }
+.slider-val { font-size: 12px; font-family: var(--mono); color: var(--accent); font-weight: 700; }
+input[type=range] { width: 100%; accent-color: var(--accent); height: 4px; }
+
+/* ── RISK MATRIX ── */
+.risk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.risk-cell { border-radius: var(--r-sm); padding: 10px 12px; }
+.rc-label { font-size: 10px; font-weight: 600; margin-bottom: 4px; }
+.rc-pop { font-size: 18px; font-weight: 600; font-family: var(--mono); }
+.rc-sub { font-size: 10px; opacity: .7; }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 2px; background: var(--bg3); border-radius: var(--r-sm); padding: 3px; margin-bottom: 16px; width: fit-content; }
+.tab-btn { padding: 6px 14px; border-radius: 5px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text2); transition: all .15s; border: none; background: none; }
+.tab-btn.on { background: var(--bg2); color: var(--text); border: 1px solid var(--border); }
+
+/* ── FORECAST LINE ── */
+.forecast-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.legend-dash { width: 16px; height: 2px; border-top: 2px dashed; flex-shrink: 0; }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* ── TOAST ── */
+#toast { position: fixed; bottom: 20px; right: 20px; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r-sm); padding: 10px 16px; font-size: 12px; color: var(--text); z-index: 1000; transform: translateY(20px); opacity: 0; transition: all .25s; display: flex; align-items: center; gap: 8px; }
+#toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── LOADING ── */
+.spinner { width: 32px; height: 32px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── SECTION LABEL ── */
+.sec-lbl { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-text">Learn<span>Forward</span></div>
+    <div class="logo-sub">Predictive Intelligence</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Analytics</div>
+      <div class="nav-item active" onclick="nav('dashboard',this)">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+        Overview
+      </div>
+      <div class="nav-item" onclick="nav('historical',this)">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 12l3-4 3 2 3-5 3 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Historical trends
+      </div>
+      <div class="nav-item" onclick="nav('forecast',this)">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 10l3-3 2 2 3-4 4 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 1"/><path d="M9 6l4-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        3-yr forecast
+      </div>
+      <div class="nav-item" onclick="nav('cohort',this)">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="5" cy="6" r="2.5" stroke="currentColor" stroke-width="1.2"/><circle cx="11" cy="6" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 14c0-2.2 1.8-4 4-4m6 0c2.2 0 4 1.8 4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Cohort analysis
+      </div>
+      <div class="nav-item" onclick="nav('risk',this)">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2l5.5 10H2.5L8 2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 7v3M8 11.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Risk signals
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Configure</div>
+      <div class="nav-item" onclick="nav('scenarios',this)">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3v10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Scenarios
+      </div>
+      <div class="nav-item" onclick="nav('data',this)">
+        <svg viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="5" rx="5" ry="2" stroke="currentColor" stroke-width="1.2"/><path d="M3 5v3c0 1.1 2.2 2 5 2s5-.9 5-2V5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8v3c0 1.1 2.2 2 5 2s5-.9 5-2V8" stroke="currentColor" stroke-width="1.2"/></svg>
+        Data manager
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="data-status">Dataset: <span>8yr · 50k</span></div>
+    <div class="data-status" style="margin-top:3px">Last updated: <span>Apr 2025</span></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ══ DASHBOARD ══ -->
+<div id="screen-dashboard" class="screen active">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Learning intelligence overview</div>
+      <div class="page-sub">8-year historical baseline · 3-year predictive forecast · 50,000 employees across Consulting, Tax, Audit, SaT</div>
+    </div>
+    <div class="head-actions">
+      <button class="btn btn-ghost" onclick="nav('data',document.querySelector('.nav-item:nth-child(7)'))">Update data</button>
+      <button class="btn btn-primary" onclick="nav('forecast',document.querySelectorAll('.nav-item')[2])">View forecast →</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-val" style="color:var(--accent)">50,247</div><div class="stat-label">Active employees</div><div class="stat-delta delta-up">↑ 4.2% YoY</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--teal)">68.4h</div><div class="stat-label">Avg learning hours/yr</div><div class="stat-delta delta-up">↑ 11.2h from 2017</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--gold)">74%</div><div class="stat-label">Completion rate</div><div class="stat-delta delta-down">↓ 3% vs target</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--green)">2.3×</div><div class="stat-label">eLearning growth</div><div class="stat-delta delta-up">since 2020</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--coral)">38%</div><div class="stat-label">AI skill gap</div><div class="stat-delta" style="color:var(--coral)">⚠ critical signal</div></div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Learning hours by modality — 8 year trend</div><span class="badge badge-teal">2017–2024</span></div>
+        <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-modality"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Completion rate by service line</div><span class="badge badge-purple">Current year</span></div>
+        <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-service"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Learning hours by HR band</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:160px"><canvas id="chart-band"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Top competency areas</div></div>
+        <div class="card-body">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">Digital & AI</span><span style="font-size:11px;font-family:var(--mono);color:var(--teal)">84h avg</span></div><div class="prog-bar"><div class="prog-fill" style="width:88%;background:var(--teal)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">Technical / domain</span><span style="font-size:11px;font-family:var(--mono);color:var(--accent)">72h avg</span></div><div class="prog-bar"><div class="prog-fill" style="width:75%;background:var(--accent)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">Leadership & mgmt</span><span style="font-size:11px;font-family:var(--mono);color:var(--gold)">58h avg</span></div><div class="prog-bar"><div class="prog-fill" style="width:60%;background:var(--gold)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">Client & commercial</span><span style="font-size:11px;font-family:var(--mono);color:var(--blue)">44h avg</span></div><div class="prog-bar"><div class="prog-fill" style="width:46%;background:var(--blue)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">Wellbeing & inclusion</span><span style="font-size:11px;font-family:var(--mono);color:var(--pink)">28h avg</span></div><div class="prog-bar"><div class="prog-fill" style="width:29%;background:var(--pink)"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Certification growth</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:160px"><canvas id="chart-cert"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec-lbl">AI-generated insights from 8-year data pattern</div>
+    <div class="insight risk">
+      <div class="insight-head"><div class="insight-type">Risk signal</div></div>
+      <div class="insight-title">VILT completion declining 6% annually since 2022 — structural disengagement risk</div>
+      <div class="insight-desc">Across Audit and Tax, virtual instructor-led training completion has dropped from 81% to 63% in 3 years. Forecast shows further decline to 48% by 2027 without intervention. Recommend blended redesign with async pre-work.</div>
+    </div>
+    <div class="insight opportunity">
+      <div class="insight-head"><div class="insight-type">Opportunity</div></div>
+      <div class="insight-title">Consulting Band C employees have 2.4× higher self-directed learning hours — scalable model exists</div>
+      <div class="insight-desc">Data shows this cohort completes 40% of learning outside assigned programmes. Replicating this behaviour across Tax and Audit could add 18 additional learning hours per employee annually without L&D investment.</div>
+    </div>
+    <div class="insight warning">
+      <div class="insight-head"><div class="insight-type">Watch signal</div></div>
+      <div class="insight-title">Residential learning ROI declining as cohort sizes shrink post-pandemic</div>
+      <div class="insight-desc">Residential programmes now average 18 attendees vs 34 in 2019. Cost-per-learner has increased 87%. Predictive model suggests this modality needs fundamental redesign or consolidation by 2026.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HISTORICAL ══ -->
+<div id="screen-historical" class="screen">
+  <div class="page-head">
+    <div><div class="page-title">Historical learning trends</div><div class="page-sub">2017–2024 · 8 years · All modalities, bands, service lines, and competencies</div></div>
+    <div class="head-actions">
+      <select class="form-select" style="width:140px" id="hist-filter" onchange="updateHistorical()">
+        <option value="all">All service lines</option>
+        <option value="consulting">Consulting</option>
+        <option value="tax">Tax</option>
+        <option value="audit">Audit</option>
+        <option value="sat">SaT</option>
+      </select>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Total learning hours trend</div><span class="badge badge-teal">All modalities stacked</span></div>
+        <div class="card-body"><div class="chart-wrap" style="height:220px"><canvas id="chart-hist-total"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Modality shift over 8 years</div><span class="badge badge-purple">% of total hours</span></div>
+        <div class="card-body"><div class="chart-wrap" style="height:220px"><canvas id="chart-modality-shift"></canvas></div></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Learning hours by HR band over time</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-band-trend"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Market segment learning intensity</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-segment"></canvas></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Year-by-year summary table</div><span class="badge badge-gold">All service lines</span></div>
+      <div class="card-body" style="padding:0">
+        <table class="data-table">
+          <thead><tr><th>Year</th><th>Employees</th><th>eLearning hrs</th><th>VILT hrs</th><th>ILT hrs</th><th>Certifications</th><th>Residential hrs</th><th>Avg hrs/person</th><th>Completion %</th></tr></thead>
+          <tbody id="hist-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FORECAST ══ -->
+<div id="screen-forecast" class="screen">
+  <div class="page-head">
+    <div><div class="page-title">3-year predictive forecast</div><div class="page-sub">2025–2027 · AI-powered trend extrapolation with confidence intervals · Based on 8-year baseline + scenario inputs</div></div>
+    <div class="head-actions">
+      <button class="btn btn-ghost" onclick="nav('scenarios',document.querySelectorAll('.nav-item')[5])">Adjust scenarios</button>
+      <button class="btn btn-teal" onclick="exportForecast()">Export forecast</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px" id="forecast-cards"></div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head">
+        <div class="card-title">Learning hours forecast — 2017–2027 (historical + predicted)</div>
+        <div class="forecast-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>eLearning</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>VILT</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>ILT / physical</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--coral)"></div>Certifications</div>
+          <div class="legend-item"><div class="legend-dash" style="border-color:var(--text3)"></div>Forecast</div>
+        </div>
+      </div>
+      <div class="card-body"><div class="chart-wrap" style="height:260px"><canvas id="chart-forecast-main"></canvas></div></div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">AI skill adoption forecast by service line</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-ai-adoption"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Predicted completion rate trajectory</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-completion-forecast"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head"><div class="card-title">Forecast confidence by metric — 2027</div><span class="badge badge-purple">Monte Carlo simulation · 10,000 runs</span></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="confidence-grid"></div>
+      </div>
+    </div>
+
+    <div class="sec-lbl">Predictive model assumptions & data sources</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px">Trend extrapolation</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.6">Weighted 3-year moving average with exponential smoothing (α=0.3) applied to 8-year historical data. Modality mix predicted using ARIMA model.</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px">External signals integrated</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.6">Industry L&D benchmarks (LinkedIn Learning Report), AI adoption curves (Gartner), regulatory training mandates (ICAI, PCAOB updates), headcount growth projections.</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px">Missing data enriched</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.6">Attrition impact (avg 18% annually), promotion-band transitions, new hire onboarding learning curves, and manager-quality multiplier effect on team completion rates.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COHORT ══ -->
+<div id="screen-cohort" class="screen">
+  <div class="page-head">
+    <div><div class="page-title">Cohort deep-dive analysis</div><div class="page-sub">Segment by HR band, service line, market segment, or competency — with predictive trajectories</div></div>
+    <div class="head-actions">
+      <select class="form-select" style="width:140px" id="cohort-dim" onchange="updateCohort()"><option value="band">By HR band</option><option value="service">By service line</option><option value="segment">By market segment</option><option value="tenure">By tenure bracket</option></select>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head"><div class="card-title" id="cohort-chart-title">Learning hours & completion — by HR band</div></div>
+      <div class="card-body"><div class="chart-wrap" style="height:240px"><canvas id="chart-cohort-main"></canvas></div></div>
+    </div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Cohort learning velocity (hrs/yr change)</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:180px"><canvas id="chart-velocity"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Predicted 3-year cohort trajectory</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:180px"><canvas id="chart-cohort-forecast"></canvas></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Cohort performance matrix</div><span class="badge badge-teal">Current year + 3yr forecast</span></div>
+      <div class="card-body" style="padding:0">
+        <table class="data-table" id="cohort-table">
+          <thead><tr><th>Cohort</th><th>Headcount</th><th>Avg hrs 2024</th><th>Completion %</th><th>AI skill hrs</th><th>Predicted hrs 2027</th><th>At-risk %</th><th>Signal</th></tr></thead>
+          <tbody id="cohort-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RISK ══ -->
+<div id="screen-risk" class="screen">
+  <div class="page-head">
+    <div><div class="page-title">Risk signals & early warnings</div><div class="page-sub">AI-detected patterns that predict future learning disengagement, skill decay, and programme failure</div></div>
+    <div class="head-actions"><button class="btn btn-ghost" onclick="showToast('Risk report exported','success')">Export risk report</button></div>
+  </div>
+  <div class="page-content">
+    <div class="risk-grid" style="margin-bottom:20px">
+      <div class="risk-cell" style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.2)"><div class="rc-label" style="color:var(--coral)">Critical risk</div><div class="rc-pop" style="color:var(--coral)">8,420</div><div class="rc-sub" style="color:var(--coral)">employees flagged</div></div>
+      <div class="risk-cell" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2)"><div class="rc-label" style="color:var(--gold)">Watch list</div><div class="rc-pop" style="color:var(--gold)">14,300</div><div class="rc-sub" style="color:var(--gold)">employees flagged</div></div>
+      <div class="risk-cell" style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)"><div class="rc-label" style="color:var(--green)">On track</div><div class="rc-pop" style="color:var(--green)">27,527</div><div class="rc-sub" style="color:var(--green)">employees on path</div></div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Risk distribution by service line</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-risk-dist"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Dropout prediction — 12-month horizon</div></div>
+        <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-dropout"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec-lbl">Top 10 predictive risk indicators from 8-year data</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px" id="risk-indicators"></div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Skill decay forecast — employees not upskilling in AI by 2027</div><span class="badge badge-coral">High urgency</span></div>
+      <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-decay"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENARIOS ══ -->
+<div id="screen-scenarios" class="screen">
+  <div class="page-head">
+    <div><div class="page-title">Scenario planner</div><div class="page-sub">Adjust assumptions and see how the 3-year forecast changes in real time</div></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="applyScenario()">Apply & recalculate →</button></div>
+  </div>
+  <div class="page-content">
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Headcount & growth assumptions</div></div>
+        <div class="card-body">
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">Annual headcount growth rate</div><div class="slider-val" id="val-growth">8%</div></div><input type="range" min="0" max="25" value="8" step="1" oninput="updateSlider('growth',this.value,'%')"></div>
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">Annual attrition rate</div><div class="slider-val" id="val-attrition">18%</div></div><input type="range" min="5" max="35" value="18" step="1" oninput="updateSlider('attrition',this.value,'%')"></div>
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">New hire onboarding hours (first year)</div><div class="slider-val" id="val-onboard">120h</div></div><input type="range" min="40" max="200" value="120" step="5" oninput="updateSlider('onboard',this.value,'h')"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Learning investment assumptions</div></div>
+        <div class="card-body">
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">eLearning budget growth per year</div><div class="slider-val" id="val-elearn">15%</div></div><input type="range" min="0" max="40" value="15" step="1" oninput="updateSlider('elearn',this.value,'%')"></div>
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">VILT sessions increase per year</div><div class="slider-val" id="val-vilt">5%</div></div><input type="range" min="-20" max="30" value="5" step="1" oninput="updateSlider('vilt',this.value,'%')"></div>
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">AI skills programme investment (₹Cr)</div><div class="slider-val" id="val-ai-invest">42</div></div><input type="range" min="10" max="120" value="42" step="2" oninput="updateSlider('ai-invest',this.value,'')"></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Behaviour & culture assumptions</div></div>
+        <div class="card-body">
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">Manager engagement uplift (vs baseline)</div><div class="slider-val" id="val-mgr">20%</div></div><input type="range" min="0" max="60" value="20" step="5" oninput="updateSlider('mgr',this.value,'%')"></div>
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">Self-directed learning target (hrs/yr)</div><div class="slider-val" id="val-self">20h</div></div><input type="range" min="0" max="60" value="20" step="2" oninput="updateSlider('self',this.value,'h')"></div>
+          <div class="slider-group"><div class="slider-head"><div class="slider-label">Mandatory AI training compliance %</div><div class="slider-val" id="val-mandatory">90%</div></div><input type="range" min="50" max="100" value="90" step="5" oninput="updateSlider('mandatory',this.value,'%')"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Scenario preview — impact on 2027 forecast</div></div>
+        <div class="card-body">
+          <div id="scenario-impact" style="display:flex;flex-direction:column;gap:10px">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text2)">Predicted avg hours/person 2027</span><span style="font-size:14px;font-family:var(--mono);color:var(--teal)" id="sc-hours">94h</span></div><div class="prog-bar"><div class="prog-fill" id="sc-hours-bar" style="width:78%;background:var(--teal)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text2)">Projected completion rate 2027</span><span style="font-size:14px;font-family:var(--mono);color:var(--accent)" id="sc-completion">82%</span></div><div class="prog-bar"><div class="prog-fill" id="sc-completion-bar" style="width:82%;background:var(--accent)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text2)">AI skill gap closed by 2027</span><span style="font-size:14px;font-family:var(--mono);color:var(--gold)" id="sc-gap">61%</span></div><div class="prog-bar"><div class="prog-fill" id="sc-gap-bar" style="width:61%;background:var(--gold)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text2)">At-risk employees (predicted)</span><span style="font-size:14px;font-family:var(--mono);color:var(--coral)" id="sc-risk">14,200</span></div><div class="prog-bar"><div class="prog-fill" id="sc-risk-bar" style="width:28%;background:var(--coral)"></div></div></div>
+          </div>
+          <div class="divider"></div>
+          <div class="card-sub">Scenario: <strong id="sc-name" style="color:var(--text)">Moderate growth, increased AI investment</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Scenario comparison — baseline vs current settings</div></div>
+      <div class="card-body"><div class="chart-wrap" style="height:200px"><canvas id="chart-scenario-compare"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DATA MANAGER ══ -->
+<div id="screen-data" class="screen">
+  <div class="page-head">
+    <div><div class="page-title">Data manager</div><div class="page-sub">Upload new datasets, edit records, and refresh the predictive model</div></div>
+    <div class="head-actions"><button class="btn btn-primary" onclick="showToast('Model recalculated with new data','success')">Recalculate model</button></div>
+  </div>
+  <div class="page-content">
+    <div class="grid2" style="margin-bottom:16px">
+      <div>
+        <div class="sec-lbl">Upload new learning data</div>
+        <div class="upload-zone" onclick="showToast('File picker opened — drop CSV or Excel file','')">
+          <div class="upload-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 22V10M10 16l6-6 6 6" stroke="#8891b0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="4" y="24" width="24" height="4" rx="2" fill="none" stroke="#8891b0" stroke-width="1.2"/></svg></div>
+          <div class="upload-label">Drop updated learning data here</div>
+          <div class="upload-sub">CSV or Excel · Employee data, completion records, certifications</div>
+        </div>
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="showToast('Template downloaded','success')">Download template</button>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="showToast('Sample data loaded','success')">Load sample data</button>
+        </div>
+      </div>
+      <div>
+        <div class="sec-lbl">Manual data entry</div>
+        <div class="card">
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Year</label><select class="form-select"><option>2024</option><option>2025</option><option>2026</option></select></div>
+              <div class="form-group"><label class="form-label">Service line</label><select class="form-select"><option>Consulting</option><option>Tax</option><option>Audit</option><option>SaT</option></select></div>
+              <div class="form-group"><label class="form-label">HR Band</label><select class="form-select"><option>Band A (Analyst)</option><option>Band B (Associate)</option><option>Band C (Manager)</option><option>Band D (Sr. Manager)</option><option>Band E (Director)</option><option>Band F (Partner)</option></select></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">eLearning hours</label><input type="number" class="form-input" placeholder="0" /></div>
+              <div class="form-group"><label class="form-label">VILT hours</label><input type="number" class="form-input" placeholder="0" /></div>
+              <div class="form-group"><label class="form-label">ILT/physical hours</label><input type="number" class="form-input" placeholder="0" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Certifications earned</label><input type="number" class="form-input" placeholder="0" /></div>
+              <div class="form-group"><label class="form-label">Residential hours</label><input type="number" class="form-input" placeholder="0" /></div>
+              <div class="form-group"><label class="form-label">Completion rate %</label><input type="number" class="form-input" placeholder="0" /></div>
+            </div>
+            <div class="form-row" style="grid-template-columns:1fr 1fr">
+              <div class="form-group"><label class="form-label">Market segment</label><select class="form-select"><option>Financial Services</option><option>Technology</option><option>Healthcare</option><option>Government</option><option>Consumer</option><option>Energy</option></select></div>
+              <div class="form-group"><label class="form-label">Competency area</label><select class="form-select"><option>Digital & AI</option><option>Technical / Domain</option><option>Leadership</option><option>Client & Commercial</option><option>Wellbeing</option></select></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="showToast('Record added — recalculate model to update forecasts','success')">Add record</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head"><div class="card-title">Current dataset — editable records</div><span class="badge badge-teal">8 years · 50k employees</span></div>
+      <div class="card-body" style="padding:0">
+        <table class="data-table" id="data-table">
+          <thead><tr><th>Year</th><th>Service line</th><th>HR band</th><th>Headcount</th><th>eLearning</th><th>VILT</th><th>ILT</th><th>Certs</th><th>Residential</th><th>Completion %</th><th>Actions</th></tr></thead>
+          <tbody id="data-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Additional data dimensions (enrichment)</div><span class="badge badge-purple">Recommended for better predictions</span></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Manager quality index</div><div style="font-size:11px;color:var(--text2);margin-bottom:8px">Adds 23% forecast accuracy — teams with engaged managers show 2.1× completion rates</div><button class="btn btn-ghost" style="font-size:11px;width:100%;justify-content:center" onclick="showToast('Manager quality template downloaded','success')">Add this data</button></div>
+          <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Performance rating linkage</div><div style="font-size:11px;color:var(--text2);margin-bottom:8px">Correlates learning hours with performance scores — enables ROI quantification per modality</div><button class="btn btn-ghost" style="font-size:11px;width:100%;justify-content:center" onclick="showToast('Performance data template downloaded','success')">Add this data</button></div>
+          <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Engagement / pulse scores</div><div style="font-size:11px;color:var(--text2);margin-bottom:8px">Predicts learning dropout 6 months before it happens — high-impact early warning signal</div><button class="btn btn-ghost" style="font-size:11px;width:100%;justify-content:center" onclick="showToast('Engagement data template downloaded','success')">Add this data</button></div>
+          <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Promotion history</div><div style="font-size:11px;color:var(--text2);margin-bottom:8px">Identifies which learning patterns predict faster promotion — creates aspirational learning paths</div><button class="btn btn-ghost" style="font-size:11px;width:100%;justify-content:center" onclick="showToast('Promotion data template downloaded','success')">Add this data</button></div>
+          <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Client billing hours</div><div style="font-size:11px;color:var(--text2);margin-bottom:8px">High utilisation periods suppress learning — builds capacity model for programme scheduling</div><button class="btn btn-ghost" style="font-size:11px;width:100%;justify-content:center" onclick="showToast('Billing data template downloaded','success')">Add this data</button></div>
+          <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px">Attrition reasons</div><div style="font-size:11px;color:var(--text2);margin-bottom:8px">Exit survey data reveals whether learning dissatisfaction drives attrition — quantifies retention ROI</div><button class="btn btn-ghost" style="font-size:11px;width:100%;justify-content:center" onclick="showToast('Attrition data template downloaded','success')">Add this data</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── DATA ──
+const YEARS = [2017,2018,2019,2020,2021,2022,2023,2024];
+const FORECAST_YEARS = [2025,2026,2027];
+const ALL_YEARS = [...YEARS,...FORECAST_YEARS];
+const SL = ['Consulting','Tax','Audit','SaT'];
+const BANDS = ['Band A','Band B','Band C','Band D','Band E','Band F'];
+
+const hist = {
+  elearn:  [18,22,28,42,56,64,72,84],
+  vilt:    [24,26,28,18,22,24,26,24],
+  ilt:     [32,30,28,12,16,18,18,16],
+  cert:    [4,5,6,7,8,10,12,14],
+  resi:    [8,8,9,6,5,5,4,4],
+  headcount:[38000,40000,42000,43000,44500,46000,48000,50247],
+  completion:[68,70,71,65,68,70,72,74],
+};
+hist.total = YEARS.map((_,i)=>hist.elearn[i]+hist.vilt[i]+hist.ilt[i]+hist.cert[i]+hist.resi[i]);
+
+const forecast = {
+  elearn:  [98,114,132],
+  vilt:    [26,27,28],
+  ilt:     [14,13,12],
+  cert:    [17,21,26],
+  resi:    [4,3,3],
+  completion:[77,80,83],
+};
+forecast.total = FORECAST_YEARS.map((_,i)=>forecast.elearn[i]+forecast.vilt[i]+forecast.ilt[i]+forecast.cert[i]+forecast.resi[i]);
+
+const serviceData = {
+  consulting: {completion:78, hours:74, ai:62},
+  tax:        {completion:71, hours:66, ai:48},
+  audit:      {completion:76, hours:70, ai:71},
+  sat:        {completion:80, hours:78, ai:67},
+};
+
+function chartDefaults() {
+  Chart.defaults.color = '#8891b0';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+  Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+  Chart.defaults.font.size = 11;
+}
+
+const charts = {};
+function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+// ── NAV ──
+function nav(id, el) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  setTimeout(()=>renderScreen(id), 50);
+}
+
+function renderScreen(id) {
+  if(id==='dashboard') renderDashboard();
+  else if(id==='historical') renderHistorical();
+  else if(id==='forecast') renderForecast();
+  else if(id==='cohort') renderCohort();
+  else if(id==='risk') renderRisk();
+  else if(id==='scenarios') renderScenarios();
+  else if(id==='data') renderData();
+}
+
+// ── CHART HELPERS ──
+function lineDataset(label, data, color, dash=false, fill=false) {
+  return { label, data, borderColor:color, backgroundColor: fill?color.replace(')',',0.08)').replace('rgb','rgba'):color+'18',
+    borderWidth: dash?1.5:2, borderDash: dash?[5,4]:[], fill, tension:0.35, pointRadius:3, pointHoverRadius:5 };
+}
+function barDataset(label, data, color) {
+  return { label, data, backgroundColor:color+'33', borderColor:color, borderWidth:1 };
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  chartDefaults();
+  destroyChart('modality'); destroyChart('service'); destroyChart('band'); destroyChart('cert');
+  charts['modality'] = new Chart(document.getElementById('chart-modality'), {
+    type:'line',
+    data:{ labels: YEARS,
+      datasets:[
+        lineDataset('eLearning',hist.elearn,'#00d4a8',false,true),
+        lineDataset('VILT',hist.vilt,'#7c6fff',false,false),
+        lineDataset('ILT / Physical',hist.ilt,'#fbbf24',false,false),
+        lineDataset('Certifications',hist.cert,'#f472b6',false,false),
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}
+  });
+  charts['service'] = new Chart(document.getElementById('chart-service'), {
+    type:'bar',
+    data:{ labels:SL, datasets:[
+      barDataset('Completion %', [78,71,76,80],'#00d4a8'),
+      barDataset('Avg hrs/person', [74,66,70,78],'#7c6fff'),
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}
+  });
+  charts['band'] = new Chart(document.getElementById('chart-band'), {
+    type:'bar',
+    data:{ labels:BANDS, datasets:[barDataset('Avg learning hrs',[120,82,68,58,54,40],'#60a5fa')]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
+  });
+  charts['cert'] = new Chart(document.getElementById('chart-cert'), {
+    type:'bar',
+    data:{ labels:YEARS, datasets:[barDataset('Certifications earned (000s)',[4,5,6,7,8,10,12,14],'#fbbf24')]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+  });
+}
+
+// ── HISTORICAL ──
+function renderHistorical() {
+  chartDefaults();
+  destroyChart('hist-total'); destroyChart('modality-shift'); destroyChart('band-trend'); destroyChart('segment');
+  charts['hist-total'] = new Chart(document.getElementById('chart-hist-total'), {
+    type:'bar',
+    data:{ labels:YEARS, datasets:[
+      {label:'eLearning',data:hist.elearn,backgroundColor:'#00d4a833',borderColor:'#00d4a8',borderWidth:1,stack:'a'},
+      {label:'VILT',data:hist.vilt,backgroundColor:'#7c6fff33',borderColor:'#7c6fff',borderWidth:1,stack:'a'},
+      {label:'ILT',data:hist.ilt,backgroundColor:'#fbbf2433',borderColor:'#fbbf24',borderWidth:1,stack:'a'},
+      {label:'Certs',data:hist.cert,backgroundColor:'#f472b633',borderColor:'#f472b6',borderWidth:1,stack:'a'},
+      {label:'Residential',data:hist.resi,backgroundColor:'#60a5fa33',borderColor:'#60a5fa',borderWidth:1,stack:'a'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}
+  });
+  const eLearnPct = hist.elearn.map((v,i)=>Math.round(v/hist.total[i]*100));
+  const viltPct = hist.vilt.map((v,i)=>Math.round(v/hist.total[i]*100));
+  const iltPct = hist.ilt.map((v,i)=>Math.round(v/hist.total[i]*100));
+  charts['modality-shift'] = new Chart(document.getElementById('chart-modality-shift'), {
+    type:'line',
+    data:{ labels:YEARS, datasets:[
+      {...lineDataset('eLearning %',eLearnPct,'#00d4a8',false,false), fill:'origin'},
+      lineDataset('VILT %',viltPct,'#7c6fff',false,false),
+      lineDataset('ILT %',iltPct,'#fbbf24',false,false),
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,max:70}}}
+  });
+  charts['band-trend'] = new Chart(document.getElementById('chart-band-trend'), {
+    type:'line',
+    data:{ labels:YEARS, datasets:[
+      lineDataset('Band A (Analyst)',[130,128,125,118,120,122,121,120],'#60a5fa'),
+      lineDataset('Band C (Manager)',[62,64,65,58,62,65,67,68],'#7c6fff'),
+      lineDataset('Band E (Director)',[50,52,51,48,50,53,54,54],'#fbbf24'),
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}
+  });
+  charts['segment'] = new Chart(document.getElementById('chart-segment'), {
+    type:'radar',
+    data:{ labels:['Fin. Services','Technology','Healthcare','Government','Consumer','Energy'],
+      datasets:[
+        {label:'Avg hrs/person',data:[72,84,65,58,62,70],borderColor:'#00d4a8',backgroundColor:'#00d4a822'},
+        {label:'Completion %',data:[76,80,68,65,71,74],borderColor:'#7c6fff',backgroundColor:'#7c6fff22'},
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{r:{beginAtZero:true,min:50,max:100,ticks:{stepSize:10}}}}
+  });
+  const tbody = document.getElementById('hist-table-body');
+  tbody.innerHTML = YEARS.map((y,i)=>`<tr>
+    <td class="highlight" style="font-family:var(--mono)">${y}</td>
+    <td>${(hist.headcount[i]/1000).toFixed(1)}k</td>
+    <td style="color:var(--teal)">${hist.elearn[i]}h</td>
+    <td style="color:var(--accent)">${hist.vilt[i]}h</td>
+    <td style="color:var(--gold)">${hist.ilt[i]}h</td>
+    <td style="color:var(--pink)">${hist.cert[i]}k</td>
+    <td style="color:var(--blue)">${hist.resi[i]}h</td>
+    <td class="highlight">${hist.total[i]}h</td>
+    <td><span class="badge ${hist.completion[i]>=72?'badge-green':hist.completion[i]>=68?'badge-gold':'badge-coral'}">${hist.completion[i]}%</span></td>
+  </tr>`).join('');
+}
+function updateHistorical() { renderHistorical(); }
+
+// ── FORECAST ──
+function renderForecast() {
+  chartDefaults();
+  const cards = [
+    {metric:'Predicted avg hrs/person 2027', value:'159h', range:'143–174h', color:var_teal, conf:84},
+    {metric:'Projected completion rate 2027', value:'83%', range:'78–88%', color:var_accent, conf:79},
+    {metric:'eLearning % of total hours 2027', value:'61%', range:'56–66%', color:var_blue, conf:88},
+    {metric:'AI skill training hours/person', value:'42h', range:'34–52h', color:var_gold, conf:71},
+  ];
+  const var_teal='#00d4a8', var_accent='#7c6fff', var_blue='#60a5fa', var_gold='#fbbf24';
+  document.getElementById('forecast-cards').innerHTML = cards.map(c=>`
+    <div class="pred-card">
+      <div class="pred-metric">${c.metric}</div>
+      <div class="pred-value" style="color:${c.color}">${c.value}</div>
+      <div class="pred-range">range: ${c.range}</div>
+      <div class="pred-confidence">
+        <div class="conf-bar"><div class="conf-fill" style="width:${c.conf}%;background:${c.color}"></div></div>
+        <div class="conf-label" style="color:${c.color}">${c.conf}%</div>
+      </div>
+    </div>`).join('');
+
+  destroyChart('forecast-main'); destroyChart('ai-adoption'); destroyChart('completion-forecast');
+  const allE = [...hist.elearn,...forecast.elearn];
+  const allV = [...hist.vilt,...forecast.vilt];
+  const allI = [...hist.ilt,...forecast.ilt];
+  const allC = [...hist.cert,...forecast.cert];
+  const histLen = YEARS.length;
+  function splitDS(data, color, label) {
+    return [
+      {label, data:[...data.slice(0,histLen), ...Array(3).fill(null)], borderColor:color, backgroundColor:color+'18', borderWidth:2, tension:0.35, fill:false, pointRadius:3},
+      {label:label+' (forecast)', data:[...Array(histLen-1).fill(null), data[histLen-1], ...data.slice(histLen)], borderColor:color, backgroundColor:color+'10', borderDash:[6,4], borderWidth:1.5, tension:0.35, fill:false, pointRadius:4, pointStyle:'triangle'},
+    ];
+  }
+  charts['forecast-main'] = new Chart(document.getElementById('chart-forecast-main'), {
+    type:'line',
+    data:{ labels:ALL_YEARS,
+      datasets:[...splitDS(allE,'#00d4a8','eLearning'),...splitDS(allV,'#7c6fff','VILT'),...splitDS(allI,'#fbbf24','ILT'),...splitDS(allC,'#f472b6','Certs')]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{filter:i=>!i.text.includes('forecast')}}},
+      scales:{y:{beginAtZero:true},x:{grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+  charts['ai-adoption'] = new Chart(document.getElementById('chart-ai-adoption'), {
+    type:'line',
+    data:{ labels:[2024,2025,2026,2027], datasets:[
+      lineDataset('Consulting',[62,74,84,92],'#7c6fff'),
+      lineDataset('Tax',[48,62,74,82],'#00d4a8'),
+      lineDataset('Audit',[71,80,88,94],'#f472b6'),
+      lineDataset('SaT',[67,77,86,91],'#fbbf24'),
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{min:40,max:100}}}
+  });
+  charts['completion-forecast'] = new Chart(document.getElementById('chart-completion-forecast'), {
+    type:'line',
+    data:{ labels:ALL_YEARS,
+      datasets:[
+        lineDataset('Actual/Predicted',([...hist.completion,77,80,83]),'#00d4a8',false,true),
+        lineDataset('Target',[75,75,75,75,75,78,80,82,84,86,88],'#7c6fff',true,false),
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{min:60,max:92}}}
+  });
+  const confGrid = [
+    {m:'Total learning hours 2027',v:'159h ±15h',c:84,col:'#00d4a8'},{m:'eLearning hours 2027',v:'132h ±18h',c:88,col:'#60a5fa'},
+    {m:'VILT completion 2027',v:'78% ±8%',c:72,col:'#7c6fff'},{m:'AI skill adoption 2027',v:'87% ±11%',c:71,col:'#fbbf24'},
+    {m:'At-risk employees 2027',v:'14,200 ±2,800',c:68,col:'#ff6b6b'},{m:'Certification growth 2027',v:'+86% vs 2024',c:82,col:'#f472b6'},
+  ];
+  document.getElementById('confidence-grid').innerHTML = confGrid.map(c=>`
+    <div style="background:var(--bg3);border-radius:var(--r-sm);padding:12px">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">${c.m}</div>
+      <div style="font-size:18px;font-weight:600;font-family:var(--mono);color:${c.col};margin-bottom:4px">${c.v}</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="conf-bar" style="flex:1"><div class="conf-fill" style="width:${c.c}%;background:${c.col}"></div></div>
+        <div style="font-size:10px;font-family:var(--mono);color:${c.col}">${c.c}% conf.</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── COHORT ──
+function renderCohort() {
+  chartDefaults();
+  destroyChart('cohort-main'); destroyChart('velocity'); destroyChart('cohort-forecast');
+  const bandHours = [120,82,68,58,54,40];
+  const bandComp = [88,82,74,70,68,62];
+  const bandForecast = [118,88,78,66,62,44];
+  charts['cohort-main'] = new Chart(document.getElementById('chart-cohort-main'), {
+    type:'bar',
+    data:{ labels:BANDS, datasets:[
+      barDataset('2024 avg hrs',bandHours,'#7c6fff'),
+      barDataset('2024 completion %',bandComp,'#00d4a8'),
+      barDataset('2027 predicted hrs',bandForecast,'#fbbf24'),
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}
+  });
+  charts['velocity'] = new Chart(document.getElementById('chart-velocity'), {
+    type:'bar',
+    data:{ labels:BANDS, datasets:[barDataset('Hrs/yr change (3yr avg)',[+2,+4,+6,+5,+3,+1],'#34d399')]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}}}
+  });
+  charts['cohort-forecast'] = new Chart(document.getElementById('chart-cohort-forecast'), {
+    type:'line',
+    data:{ labels:[2024,2025,2026,2027], datasets:[
+      lineDataset('Band A',[120,118,116,118],'#60a5fa'),
+      lineDataset('Band B',[82,86,89,88],'#7c6fff'),
+      lineDataset('Band C',[68,72,76,78],'#00d4a8'),
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:false}}}
+  });
+  const rows = [
+    ['Band A (Analyst)','12,400','120h','88%','18h','118h','12%','badge-green','On track'],
+    ['Band B (Associate)','18,200','82h','82%','12h','88h','18%','badge-teal','On track'],
+    ['Band C (Manager)','11,300','68h','74%','8h','78h','24%','badge-gold','Watch'],
+    ['Band D (Sr. Manager)','5,100','58h','70%','6h','66h','31%','badge-gold','Watch'],
+    ['Band E (Director)','2,400','54h','68%','4h','62h','38%','badge-coral','At risk'],
+    ['Band F (Partner)','847','40h','62%','2h','44h','44%','badge-coral','Critical'],
+  ];
+  document.getElementById('cohort-table-body').innerHTML = rows.map(r=>`<tr>
+    <td class="highlight">${r[0]}</td><td>${r[1]}</td><td style="color:var(--teal)">${r[2]}</td>
+    <td><span class="badge ${r[6]}">${r[3]}</span></td><td style="color:var(--accent)">${r[4]}</td>
+    <td style="color:var(--gold);font-family:var(--mono)">${r[5]}</td><td style="color:var(--coral)">${r[6].includes('coral')||r[6].includes('gold')?r[7]:r[7]}</td>
+    <td><span class="badge ${r[6]}">${r[8]}</span></td>
+  </tr>`).join('');
+}
+function updateCohort() { renderCohort(); }
+
+// ── RISK ──
+function renderRisk() {
+  chartDefaults();
+  destroyChart('risk-dist'); destroyChart('dropout'); destroyChart('decay');
+  charts['risk-dist'] = new Chart(document.getElementById('chart-risk-dist'), {
+    type:'bar',
+    data:{ labels:SL, datasets:[
+      barDataset('Critical risk',[18,24,16,12],'#ff6b6b'),
+      barDataset('Watch list',[28,30,24,18],'#fbbf24'),
+      barDataset('On track',[54,46,60,70],'#34d399'),
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},
+      scales:{x:{stacked:true},y:{stacked:true,max:100,ticks:{callback:v=>v+'%'}}}}
+  });
+  charts['dropout'] = new Chart(document.getElementById('chart-dropout'), {
+    type:'line',
+    data:{ labels:['Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026','Q2 2026','Q3 2026'],
+      datasets:[
+        lineDataset('Predicted dropout (000s)',[1.2,1.4,1.8,2.1,2.4,2.8,3.1],'#ff6b6b',false,true),
+        lineDataset('Preventable (intervention)',[0.8,0.9,1.1,1.2,1.3,1.4,1.5],'#fbbf24',true,false),
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}
+  });
+  const riskIndicators = [
+    {rank:1,indicator:'No learning activity for 90+ consecutive days',affected:'8,420',urgency:'Critical',direction:'↑ 14% YoY'},
+    {rank:2,indicator:'VILT no-show rate >40% in last 6 months',affected:'6,200',urgency:'Critical',direction:'↑ 9% YoY'},
+    {rank:3,indicator:'Zero certifications in 3+ years (Band C and above)',affected:'5,800',urgency:'High',direction:'↑ 6% YoY'},
+    {rank:4,indicator:'eLearning completion declining 2+ consecutive years',affected:'4,300',urgency:'High',direction:'↑ 4% YoY'},
+    {rank:5,indicator:'Manager with team completion rate <50%',affected:'3,100',urgency:'High',direction:'New signal'},
+    {rank:6,indicator:'AI/Digital learning hours = 0 in FY2024',affected:'12,400',urgency:'High',direction:'↑ 18% YoY'},
+    {rank:7,indicator:'Band E–F learning hours below Band average',affected:'2,100',urgency:'Medium',direction:'Stable'},
+    {rank:8,indicator:'New hire (<18m) with <40h learning in year 1',affected:'1,800',urgency:'Medium',direction:'↓ 3% YoY'},
+    {rank:9,indicator:'Residential programme no-show (3+ consecutive)',affected:'980',urgency:'Medium',direction:'↑ 7% YoY'},
+    {rank:10,indicator:'Competency gap score >60% with no development plan',affected:'14,300',urgency:'Watch',direction:'New metric'},
+  ];
+  document.getElementById('risk-indicators').innerHTML = riskIndicators.map(r=>`
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:12px;font-family:var(--mono);color:var(--text3);width:20px;flex-shrink:0">#${r.rank}</div>
+      <div style="flex:1;font-size:12px;color:var(--text2)">${r.indicator}</div>
+      <div style="font-size:12px;font-family:var(--mono);color:var(--text);width:60px;text-align:right">${r.affected}</div>
+      <span class="badge ${r.urgency==='Critical'?'badge-coral':r.urgency==='High'?'badge-gold':r.urgency==='Medium'?'badge-blue':'badge-purple'}">${r.urgency}</span>
+      <div style="font-size:11px;color:var(--text3);font-family:var(--mono);width:80px;text-align:right">${r.direction}</div>
+    </div>`).join('');
+  charts['decay'] = new Chart(document.getElementById('chart-decay'), {
+    type:'line',
+    data:{ labels:BANDS,
+      datasets:[
+        {label:'% with no AI learning 2024',data:[12,18,28,38,46,54],borderColor:'#ff6b6b',backgroundColor:'#ff6b6b18',borderWidth:2,fill:true,tension:0.35,pointRadius:4},
+        {label:'Predicted % without intervention 2027',data:[8,14,22,35,48,62],borderColor:'#fbbf24',backgroundColor:'transparent',borderWidth:2,borderDash:[5,4],fill:false,tension:0.35,pointRadius:4},
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,max:80,ticks:{callback:v=>v+'%'}}}}
+  });
+}
+
+// ── SCENARIOS ──
+function renderScenarios() {
+  chartDefaults();
+  destroyChart('scenario-compare');
+  charts['scenario-compare'] = new Chart(document.getElementById('chart-scenario-compare'), {
+    type:'line',
+    data:{ labels:[2024,2025,2026,2027], datasets:[
+      lineDataset('Baseline (no change)',[68,72,74,76],'#8891b0',true,false),
+      lineDataset('Current scenario',[68,77,80,83],'#00d4a8',false,false),
+      lineDataset('Optimistic',[68,80,86,90],'#7c6fff',false,false),
+      lineDataset('Conservative',[68,70,72,73],'#fbbf24',true,false),
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{min:60,max:95,ticks:{callback:v=>v+'%'}}}}
+  });
+}
+
+function updateSlider(id, val, suffix) {
+  document.getElementById('val-'+id).textContent = val+suffix;
+  const h = Math.min(180, 60 + parseInt(document.getElementById('val-elearn').textContent)*2);
+  const comp = Math.min(95, 65 + parseInt(document.getElementById('val-mandatory').textContent)*0.3);
+  const gap = Math.min(90, 30 + parseInt(document.getElementById('val-ai-invest').textContent)*0.7);
+  const risk = Math.max(8000, 22000 - parseInt(document.getElementById('val-mandatory').textContent)*100);
+  document.getElementById('sc-hours').textContent = h+'h';
+  document.getElementById('sc-completion').textContent = Math.round(comp)+'%';
+  document.getElementById('sc-gap').textContent = Math.round(gap)+'%';
+  document.getElementById('sc-risk').textContent = risk.toLocaleString();
+  document.getElementById('sc-hours-bar').style.width = Math.min(100,h/1.8)+'%';
+  document.getElementById('sc-completion-bar').style.width = comp+'%';
+  document.getElementById('sc-gap-bar').style.width = gap+'%';
+  document.getElementById('sc-risk-bar').style.width = (risk/50247*100)+'%';
+}
+function applyScenario() { showToast('Scenario applied — forecast recalculated','success'); }
+
+// ── DATA TABLE ──
+function renderData() {
+  const rows = [
+    [2024,'Consulting','Band C',11300,82,24,16,14,4,78],
+    [2024,'Tax','Band B',9800,68,20,14,10,4,71],
+    [2024,'Audit','Band A',7200,74,22,18,8,6,76],
+    [2024,'SaT','Band D',2100,88,26,12,18,2,80],
+    [2023,'Consulting','Band C',10800,72,26,18,12,4,76],
+    [2023,'Tax','Band B',9200,60,22,16,8,4,69],
+    [2023,'Audit','Band A',6900,62,24,20,6,6,74],
+    [2022,'Consulting','Band C',10200,64,28,20,10,5,74],
+    [2021,'Tax','Band B',8600,52,20,16,7,5,66],
+  ];
+  document.getElementById('data-table-body').innerHTML = rows.map((r,i)=>`<tr>
+    <td style="font-family:var(--mono);color:var(--accent)">${r[0]}</td>
+    <td>${r[1]}</td><td>${r[2]}</td>
+    <td>${r[3].toLocaleString()}</td>
+    <td style="color:var(--teal)">${r[4]}h</td>
+    <td style="color:var(--accent)">${r[5]}h</td>
+    <td style="color:var(--gold)">${r[6]}h</td>
+    <td style="color:var(--pink)">${r[7]}</td>
+    <td style="color:var(--blue)">${r[8]}h</td>
+    <td><span class="badge ${r[9]>=76?'badge-teal':r[9]>=70?'badge-gold':'badge-coral'}">${r[9]}%</span></td>
+    <td><button style="font-size:10px;padding:3px 8px;border:1px solid var(--border2);border-radius:4px;background:transparent;color:var(--text2);cursor:pointer" onclick="showToast('Row ${i+1} opened for editing','')">Edit</button></td>
+  </tr>`).join('');
+}
+
+function exportForecast() { showToast('Forecast exported to Excel','success'); }
+
+// ── TOAST ──
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.innerHTML = (type==='success'?'<span style="color:#34d399">✓</span> ':type==='error'?'<span style="color:#ff6b6b">⚠</span> ':'<span style="color:#7c6fff">✦</span> ') + msg;
+  el.className = 'show';
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.className='', 3000);
+}
+
+// ── INIT ──
+window.addEventListener('load', ()=>{ chartDefaults(); renderDashboard(); });
+</script>
+</body>
+</html>
