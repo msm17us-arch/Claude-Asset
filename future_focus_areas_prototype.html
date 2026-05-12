@@ -1,0 +1,337 @@
+
+<h2 class="sr-only">Future Focus Areas Explorer — an interactive tool showing the six evolved L&D focus areas, their role profiles, skills, and band placement for 2027</h2>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.shell{font-family:var(--font-sans)}
+.topbar{background:#1B3A5C;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:var(--border-radius-lg) var(--border-radius-lg) 0 0}
+.brand{font-size:13px;font-weight:500;color:#7EC8D4;letter-spacing:.05em}
+.brand span{color:rgba(255,255,255,.6);font-weight:400;margin-left:8px}
+.badge{font-size:11px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);padding:3px 10px;border-radius:20px}
+
+.compare-bar{display:flex;background:var(--color-background-secondary);border-bottom:.5px solid var(--color-border-tertiary);padding:12px 20px;gap:8px;flex-wrap:wrap;align-items:center}
+.compare-label{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
+.old-pill{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.arrow-ic{font-size:14px;color:var(--color-text-secondary)}
+.new-pill{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500}
+
+.fa-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:20px;background:var(--color-background-secondary)}
+.fa-card{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;cursor:pointer;border-left:3px solid transparent;transition:border-color .15s}
+.fa-card:hover{border-left-color:var(--color-border-secondary)}
+.fa-card.selected{border-left-width:3px}
+.fa-number{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.fa-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.fa-tagline{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.fa-bands{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.band-chip{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:.5px solid var(--color-border-tertiary)}
+
+.detail{padding:20px;background:var(--color-background-secondary);border-radius:0 0 var(--border-radius-lg) var(--border-radius-lg)}
+.detail-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.detail-title{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.detail-sub{font-size:13px;color:var(--color-text-secondary);margin-top:3px;line-height:1.5;max-width:500px}
+
+.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:12px}
+.card{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px}
+.card-lbl{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+.item-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:.5px solid var(--color-border-tertiary);font-size:12px;color:var(--color-text-primary);line-height:1.5}
+.item-row:last-child{border-bottom:none}
+.dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
+
+.three-col{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.evo-box{padding:12px;border-radius:var(--border-radius-md);font-size:12px;line-height:1.6}
+.evo-box.dies{background:#FEE2E2;border:.5px solid #FCA5A5;color:#7F1D1D}
+.evo-box.shifts{background:#FAEEDA;border:.5px solid #FCD34D;color:#412402}
+.evo-box.born{background:#E1F5EE;border:.5px solid #6EE7B7;color:#04342C}
+.evo-lbl{font-weight:500;font-size:10px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px}
+
+.skill-row{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:5px;font-size:12px}
+.skill-name{font-weight:500;color:var(--color-text-primary)}
+.skill-note{color:var(--color-text-secondary)}
+
+.avoid-row{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:#FEF3C7;border:.5px solid #FCD34D;border-radius:var(--border-radius-md);margin-bottom:5px;font-size:12px;color:#412402}
+
+.empty{text-align:center;padding:40px 20px;color:var(--color-text-secondary);font-size:13px}
+.empty i{font-size:32px;display:block;margin-bottom:8px;color:var(--color-border-secondary)}
+.tabs{display:flex;border-bottom:.5px solid var(--color-border-tertiary);margin-bottom:14px;background:var(--color-background-primary);border-radius:var(--border-radius-md) var(--border-radius-md) 0 0}
+.dtab{padding:9px 14px;font-size:12px;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;white-space:nowrap}
+.dtab.on{color:#0D7A6E;border-bottom-color:#0D7A6E;font-weight:500}
+.dtab:hover:not(.on){color:var(--color-text-primary)}
+</style>
+
+<div class="shell">
+<div class="topbar">
+  <div class="brand">LRSR 2027 <span>Future Focus Area Explorer</span></div>
+  <div class="badge"><i class="ti ti-rocket" aria-hidden="true"></i> Forward-Looking Framework</div>
+</div>
+
+<div class="compare-bar">
+  <span class="compare-label">Today's 5 focus areas:</span>
+  <span class="old-pill">Operations</span>
+  <span class="old-pill">Strategy</span>
+  <span class="old-pill">Content</span>
+  <span class="old-pill">Platforms & Analytics</span>
+  <span class="old-pill">Facilitation</span>
+  <span class="arrow-ic"><i class="ti ti-arrow-right" aria-hidden="true"></i></span>
+  <span class="compare-label">Tomorrow's 6:</span>
+  <span class="new-pill" style="background:#E6F1FB;color:#0C447C">Learning Intelligence</span>
+  <span class="new-pill" style="background:#E1F5EE;color:#085041">Business Partnership</span>
+  <span class="new-pill" style="background:#FAEEDA;color:#412402">Experience Design</span>
+  <span class="new-pill" style="background:#EBF4F7;color:#1B3A5C">AI & Tech Orchestration</span>
+  <span class="new-pill" style="background:#EAF3DE;color:#27500A">Impact & Data</span>
+  <span class="new-pill" style="background:#FBEAF0;color:#4B1528">Human Facilitation</span>
+</div>
+
+<div class="fa-grid" id="fa-grid"></div>
+
+<div class="detail" id="detail">
+  <div class="empty"><i class="ti ti-hand-click" aria-hidden="true"></i>Select a focus area above to explore its future profile</div>
+</div>
+</div>
+
+<script>
+const FAS = [
+  {
+    id:"intel", num:"01", name:"Learning Intelligence",
+    tagline:"Sensing needs before they are articulated",
+    color:"#185FA5", bg:"#E6F1FB", textColor:"#0C447C",
+    bands:["Band 2","Band 3"],
+    absorbed:"Business needs assessment; TNA surveys; learner insights and benchmarking; learning data interpretation",
+    replaces:"Strategy (analytical half)",
+    definition:"Using AI-generated signals, skills data, workforce analytics, and business intelligence to identify capability gaps before the business articulates them — and translating those signals into learning investment recommendations.",
+    whatDies:["Annual TNA survey cycles","Manual benchmarking reports","Reactive needs gathering from business conversations"],
+    whatShifts:["Needs assessment becomes continuous, not periodic","Data interpretation replaces data collection","Insights are AI-assisted, not manually compiled"],
+    whatBorn:["AI signal interpretation — reading workforce and performance data to anticipate gaps","Skills taxonomy stewardship — maintaining the competency map the firm uses","Predictive capability analytics — anticipating future needs from leading indicators"],
+    mustHave:[
+      {s:"Data literacy",n:"Ability to interrogate datasets, identify patterns, and form evidence-based views — not just read a dashboard"},
+      {s:"Skills taxonomy understanding",n:"Knowing how competencies relate to each other and to business outcomes"},
+      {s:"AI tool fluency",n:"Working with AI-generated insights critically — knowing when to trust them and when to question them"},
+    ],
+    futureReady:["Statistical confidence intervals and uncertainty communication","Predictive modelling basics","Workforce planning frameworks"],
+    avoid:["Generic 'learning strategy' experience without data component","Survey design as a primary skill","People who are strong partners but weak analysts"]
+  },
+  {
+    id:"biz", num:"02", name:"Business Partnership",
+    tagline:"Strategic advisor, not service provider",
+    color:"#0F6E56", bg:"#E1F5EE", textColor:"#085041",
+    bands:["Band 2"],
+    absorbed:"Business stakeholder engagement; annual capability planning; budget approval conversations",
+    replaces:"Strategy (relationship half)",
+    definition:"Sitting inside the business to translate capability priorities into learning investment decisions — acting with the credibility, business language, and influence of a senior advisor rather than a learning coordinator.",
+    whatDies:["Reactive business partner calls triggered by programme needs","Generic annual learning planning conversations","Learning-led TNA processes with business sign-off"],
+    whatShifts:["Business partnership becomes proactive capability advisory","Conversations shift from 'what training do you need' to 'where is capability risk'","Learning ROI is owned by the business partner, not reported by MIS"],
+    whatBorn:["AI-era capability advisory — helping leaders prepare their teams for AI-augmented work","Change facilitation — supporting leaders navigating the human side of AI adoption","Investment framing — building the business case for learning spend in outcome language"],
+    mustHave:[
+      {s:"Executive presence and influence",n:"Ability to challenge, reframe, and get commitment from senior business leaders — not just manage them"},
+      {s:"Business language fluency",n:"Capability gaps articulated as revenue risk, client experience, or competitive positioning — not as learning objectives"},
+      {s:"Learning ROI framing",n:"Converting learning investment into outcome narratives that finance and business leadership find credible"},
+    ],
+    futureReady:["AI adoption change management","Workforce strategy and capability planning","Senior stakeholder coaching skills"],
+    avoid:["L&D generalists without demonstrated business credibility","People who are strong analysts but weak influencers","Treating this as a Band 3 or Band 4 hire — it requires genuine seniority"]
+  },
+  {
+    id:"exp", num:"03", name:"Learning Experience Design",
+    tagline:"How people learn, not just what they are taught",
+    color:"#854F0B", bg:"#FEF3C7", textColor:"#412402",
+    bands:["Band 3","Band 4"],
+    absorbed:"Learning journey curation; content governance and quality; SME management; AI content QA",
+    replaces:"Content (design and governance half)",
+    definition:"Designing how people actually learn — architecting journeys, governing content quality, validating AI-generated material, and ensuring that what the firm produces creates real capability change rather than completion metrics.",
+    whatDies:["Manual content writing and module production","Content formatting and upload work","Generic 'content library management'"],
+    whatShifts:["Content development becomes AI-assisted — human role shifts to judgment and quality","Journey architecture becomes more important as content proliferates","SME management focuses on insight extraction rather than writing support"],
+    whatBorn:["AI content quality assurance — validating accuracy, appropriateness, and learning effectiveness of AI outputs","Adaptive journey design — building pathways that respond to learner progress","Microlearning architecture — designing for the moment of need, not the scheduled classroom"],
+    mustHave:[
+      {s:"Instructional design principles",n:"Understanding how people build competence — not just knowledge — and what learning designs actually change behaviour"},
+      {s:"Content judgment",n:"Ability to evaluate whether a piece of content — AI-generated or human-written — will actually do what it claims to do"},
+      {s:"Journey architecture",n:"Mapping learning sequences to real workflow, performance moments, and capability stages"},
+    ],
+    futureReady:["AI content tool fluency (prompting, editing, evaluating outputs)","Adaptive learning platform logic","Competency-based assessment design"],
+    avoid:["Hiring for content production speed — AI does that now","Instructional designers who only work in one format or modality","People who mistake 'engaging content' for 'effective learning'"]
+  },
+  {
+    id:"tech", num:"04", name:"AI & Technology Orchestration",
+    tagline:"Governing how AI serves learning, not the reverse",
+    color:"#185FA5", bg:"#EBF4F7", textColor:"#1B3A5C",
+    bands:["Band 3","Band 4"],
+    absorbed:"LMS governance and platform strategy; vendor management; automation design; AI tool standards",
+    replaces:"Platforms & Analytics (platform management half) + Operations (technology-adjacent tasks)",
+    definition:"Governing how AI tools and learning technology are deployed, integrated, and quality-controlled — ensuring the firm's learning technology stack serves learning goals and operates within appropriate governance boundaries.",
+    whatDies:["Manual LMS data entry and course administration","Routine attendance and completion tracking","Technology tool exploration without governance structure"],
+    whatShifts:["Platform management becomes governance-first — configuration and standards rather than administration","Vendor management focuses on AI capability and governance, not price and features","Technology decisions are framed around learning quality, not operational convenience"],
+    whatBorn:["AI governance for learning — setting standards for what AI is allowed to decide vs. what needs human review","Automation design — defining which operational workflows should be automated and how","Platform integration strategy — connecting LMS, content platforms, skills systems, and AI tools coherently"],
+    mustHave:[
+      {s:"Learning technology architecture",n:"Understanding how LMS, content platforms, skills systems, and AI tools interact — and where governance is needed"},
+      {s:"AI governance thinking",n:"Setting clear boundaries for AI use: what it decides, what it recommends, what humans always review"},
+      {s:"Vendor evaluation",n:"Assessing technology options against learning quality and governance criteria, not just feature lists or price"},
+    ],
+    futureReady:["API and integration basics (non-coding)","AI tool auditing and bias evaluation","Change management for technology adoption"],
+    avoid:["Pure IT profile without learning context","People who are excited by technology for its own sake","Treating this as an IT support function — it is a learning quality and governance role"]
+  },
+  {
+    id:"impact", num:"05", name:"Learning Impact & Data",
+    tagline:"Did it change anything? Prove it.",
+    color:"#3B6D11", bg:"#EAF3DE", textColor:"#27500A",
+    bands:["Band 3","Band 4"],
+    absorbed:"Learning reporting and insights; data reconciliation; MIS analytics; effectiveness measurement",
+    replaces:"Platforms & Analytics (analytics half) + MIS",
+    definition:"Measuring whether learning actually changes behaviour and business performance — moving from completion dashboards to causal analysis of capability investment and its outcomes.",
+    whatDies:["Weekly completion rate reports","Hours-completed dashboards","Attendance-based ROI claims"],
+    whatShifts:["Reporting shifts from activity metrics to outcome metrics","Data extraction is automated — human role becomes interpretation and insight","Dashboard work focuses on business decisions, not operational tracking"],
+    whatBorn:["Causal impact analysis — measuring whether a learning intervention changed performance, not just whether people attended","Predictive analytics — using historical data to anticipate where skill gaps will emerge","Business outcome linkage — connecting learning data to revenue, retention, or client metrics"],
+    mustHave:[
+      {s:"Learning measurement frameworks",n:"Understanding Kirkpatrick, Phillips, and more sophisticated causal attribution models — not just completing levels 1–2"},
+      {s:"Statistical literacy",n:"Ability to design comparisons, interpret results with appropriate confidence, and communicate uncertainty honestly"},
+      {s:"Data storytelling",n:"Building outputs that answer the question 'should we keep investing in this?' — not just showing what happened"},
+    ],
+    futureReady:["Regression and correlation analysis basics","Business intelligence tool fluency (Power BI, Tableau)","Experimental design for learning interventions"],
+    avoid:["Hiring people who are good at making dashboards look good","Treating this as a reporting or MIS admin role","People who are comfortable with correlation but not causation"]
+  },
+  {
+    id:"human", num:"06", name:"Human-Centred Facilitation",
+    tagline:"The irreducible human work of building capability",
+    color:"#72243E", bg:"#FBEAF0", textColor:"#4B1528",
+    bands:["Band 2","Band 3","Band 4"],
+    absorbed:"Facilitator sourcing, development, and performance management; complex ILT/VILT delivery; coaching",
+    replaces:"Facilitation (quality core)",
+    definition:"The irreducibly human work of building capability — coaching, facilitating complex conversations, developing facilitators, and creating the conditions where real learning happens through relationships rather than platforms.",
+    whatDies:["High-volume VILT production logistics","Routine facilitator briefing and readiness admin","Rostering and scheduling work"],
+    whatShifts:["Facilitation volume falls — quality expectations rise sharply","Facilitator development becomes the primary activity, not facilitation management","Internal faculty quality becomes a strategic asset, not an operational function"],
+    whatBorn:["AI-era facilitation design — helping facilitators work effectively when learners also have AI tools","Coaching culture development — building the firm's capacity for ongoing learning dialogue, not just formal programmes","Complex conversation facilitation — sessions where outcomes are uncertain and psychological safety is essential"],
+    mustHave:[
+      {s:"Facilitation design",n:"Knowing what kinds of learning experiences need human facilitation — and what kind of facilitation works for different audiences and outcomes"},
+      {s:"Facilitator development",n:"Coaching internal facilitators to genuinely improve their practice — not just briefing them on programme content"},
+      {s:"Complex conversation facilitation",n:"Leading sessions where the outcome is uncertain, the stakes are high, and psychological safety is the precondition for learning"},
+    ],
+    futureReady:["Coaching qualification or equivalent depth","AI-augmented facilitation techniques","Group dynamics and learning culture design"],
+    avoid:["Hiring for volume delivery capacity — volume is shrinking","Facilitators who are content experts first and learning designers second","People who are excellent in the classroom but resistant to developing others"]
+  }
+];
+
+let activeFa = null;
+let activeTab = 'profile';
+
+function renderGrid(){
+  const g = document.getElementById('fa-grid');
+  g.innerHTML = FAS.map(fa=>`
+    <div class="fa-card ${activeFa===fa.id?'selected':''}" onclick="selectFa('${fa.id}')" style="${activeFa===fa.id?`border-left-color:${fa.color}`:''}">
+      <div class="fa-number" style="color:${fa.color}">Focus Area ${fa.num}</div>
+      <div class="fa-name">${fa.name}</div>
+      <div class="fa-tagline">${fa.tagline}</div>
+      <div class="fa-bands">${fa.bands.map(b=>`<span class="band-chip">${b}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+function selectFa(id){
+  activeFa = id;
+  activeTab = 'profile';
+  renderGrid();
+  renderDetail();
+}
+
+function switchDTab(tab, el){
+  activeTab = tab;
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderTabContent();
+}
+
+function renderDetail(){
+  const fa = FAS.find(f=>f.id===activeFa);
+  if(!fa){return;}
+  document.getElementById('detail').innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-title" style="color:${fa.textColor}">${fa.name}</div>
+        <div class="detail-sub">${fa.definition}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+        ${fa.bands.map(b=>`<span class="band-chip">${b}</span>`).join('')}
+        <span style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">Replaces: ${fa.replaces}</span>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="dtab on" onclick="switchDTab('profile',this)">Role profile</div>
+      <div class="dtab" onclick="switchDTab('transition',this)">Transition view</div>
+      <div class="dtab" onclick="switchDTab('skills',this)">Hiring skills</div>
+    </div>
+    <div id="tab-content"></div>`;
+  renderTabContent();
+}
+
+function renderTabContent(){
+  const fa = FAS.find(f=>f.id===activeFa);
+  const el = document.getElementById('tab-content');
+  if(activeTab==='profile'){
+    el.innerHTML = `
+      <div class="two-col">
+        <div class="card">
+          <div class="card-lbl">Absorbed from today's structure</div>
+          <div style="font-size:12px;color:var(--color-text-primary);line-height:1.7">${fa.absorbed}</div>
+        </div>
+        <div class="card">
+          <div class="card-lbl">What this focus area does</div>
+          <div style="font-size:12px;color:var(--color-text-primary);line-height:1.7">${fa.definition}</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-lbl">Must-have skills for this focus area</div>
+        ${fa.mustHave.map(s=>`
+          <div class="skill-row" style="background:${fa.bg};border:.5px solid ${fa.color}22">
+            <i class="ti ti-star" style="color:${fa.color};font-size:14px;margin-top:1px;flex-shrink:0" aria-hidden="true"></i>
+            <div><span class="skill-name">${s.s}</span><br><span class="skill-note">${s.n}</span></div>
+          </div>`).join('')}
+      </div>`;
+  } else if(activeTab==='transition'){
+    el.innerHTML = `
+      <div class="three-col">
+        <div class="evo-box dies">
+          <div class="evo-lbl">↓ What ends</div>
+          ${fa.whatDies.map(d=>`<div style="margin-bottom:4px">• ${d}</div>`).join('')}
+        </div>
+        <div class="evo-box shifts">
+          <div class="evo-lbl">→ What shifts</div>
+          ${fa.whatShifts.map(d=>`<div style="margin-bottom:4px">• ${d}</div>`).join('')}
+        </div>
+        <div class="evo-box born">
+          <div class="evo-lbl">↑ What emerges</div>
+          ${fa.whatBorn.map(d=>`<div style="margin-bottom:4px">• ${d}</div>`).join('')}
+        </div>
+      </div>
+      <div class="card" style="margin-top:10px">
+        <div class="card-lbl">Future-ready skills to develop now</div>
+        ${fa.futureReady.map(s=>`
+          <div class="skill-row">
+            <i class="ti ti-arrow-up-right" style="color:#0F6E56;font-size:14px;flex-shrink:0" aria-hidden="true"></i>
+            <span style="font-size:12px;color:var(--color-text-primary)">${s}</span>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-lbl">Must-have skills — non-negotiable at hiring</div>
+        ${fa.mustHave.map(s=>`
+          <div class="iview-row" style="padding:10px;border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:7px;background:var(--color-background-primary)">
+            <div style="font-size:12px;font-weight:500;color:${fa.textColor};margin-bottom:3px">${s.s}</div>
+            <div style="font-size:12px;color:var(--color-text-secondary)">${s.n}</div>
+          </div>`).join('')}
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-lbl">Future-ready — assess learning agility toward these</div>
+        ${fa.futureReady.map(s=>`
+          <div class="skill-row">
+            <i class="ti ti-arrow-up-right" style="color:#0F6E56;font-size:14px;flex-shrink:0" aria-hidden="true"></i>
+            <span style="font-size:12px;color:var(--color-text-primary)">${s}</span>
+          </div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="card-lbl">What to avoid screening for</div>
+        ${fa.avoid.map(s=>`
+          <div class="avoid-row">
+            <i class="ti ti-x" style="flex-shrink:0;margin-top:1px" aria-hidden="true"></i>
+            <span>${s}</span>
+          </div>`).join('')}
+      </div>`;
+  }
+}
+
+renderGrid();
+</script>
